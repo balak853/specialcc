@@ -12,18 +12,21 @@ PUBLIC_APIS = [
 
 def fetch_data(website):
     """Fetches data from multiple public APIs and returns the first valid response."""
+    headers = {"User-Agent": "Mozilla/5.0"}
+    
     for api in PUBLIC_APIS:
         try:
             url = api.format(website)
-            response = httpx.get(url, timeout=10)
-            data = response.json()
-
-            if data:
-                return data  # If response is received, return data
+            with httpx.Client(headers=headers, timeout=10) as client:
+                response = client.get(url)
+                if response.status_code == 200:
+                    data = response.json()
+                    if data:
+                        return data  # Return if valid data found
         except Exception as e:
-            print(f"⚠️ API failed: {api} | Error: {e}")
+            print(f"⚠️ API request failed: {api} | Error: {e}")
 
-    return None  # Return None if no API returns data
+    return None  # Return None if no data is found
 
 @Client.on_message(filters.command("url", [".", "/"]))
 async def cmd_url(client, message):
@@ -33,14 +36,26 @@ async def cmd_url(client, message):
         await message.reply_text("❌ Usage: /url <website_url>")
         return
     
-    website = args[1]
+    website = args[1].strip()
+
+    if not website.startswith(("http://", "https://")):
+        await message.reply_text("❌ Invalid URL. Please enter a valid website URL (e.g., https://example.com).")
+        return
+
+    # ⏳ Send processing message
+    processing_msg = await message.reply_text("🔄 Fetching data, please wait...")
+
+    # Fetch data
     data = fetch_data(website)
+
+    # Delete processing message
+    await processing_msg.delete()
 
     if not data:
         await message.reply_text("❌ No data found from any public API.")
         return
 
-    # Extract relevant data with default values
+    # Extract relevant data safely
     result = f"""
 🔍 *Gateways Fetched Successfully ✅*
 ━━━━━━━━━━━━━
@@ -57,5 +72,5 @@ async def cmd_url(client, message):
 🤖 *Bot by:* [【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎](tg://user?id=7028548502)
 """
 
+    # Send final result (This message will NOT be deleted)
     await message.reply_text(result, parse_mode="Markdown")
-
