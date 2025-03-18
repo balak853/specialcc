@@ -88,6 +88,8 @@ Unsupported card type."""
 𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {flag}
 
+- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾
+- 𝐎𝐰𝐧𝐞𝐫 - <a href="tg://user?id=6745804180">Toͥnmͣoͫy 〔 Ɠφ 〕</a>
 𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
 """
         await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
