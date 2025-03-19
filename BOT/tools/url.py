@@ -3,83 +3,158 @@ import re
 from pyrogram import Client, filters
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
+import asyncio
+import json
+import httpx
+import telegram
+from telegram.ext import Application, CommandHandler
+from bs4 import BeautifulSoup
+import cloudscraper
 
-# List of public APIs
-PUBLIC_APIS = [
-    "https://api.urlscan.io/v1/search/?q=domain:{}",
-    "https://ipwhois.app/json/{}"
-]
+# Load bot token from config.json
+with open("config.json", "r") as f:
+    config = json.load(f)
+BOT_TOKEN = config["bot_token"]
 
-def extract_domain(url):
-    """Extracts the domain name from a given URL."""
-    match = re.search(r"https?://([^/]+)", url)
-    return match.group(1) if match else url
+async def start(update, context):
+    await context.bot.send_message(
+        chat_id=update.effective_chat.id, 
+        text="I'm a gateway lookup bot! Use /url <website_url> to get information."
+    )
 
-def fetch_data(website):
-    """Fetches data from multiple public APIs and returns the first valid response."""
-    headers = {"User-Agent": "Mozilla/5.0"}
-    domain = extract_domain(website)  # Ensure we're passing just the domain
-
-    for api in PUBLIC_APIS:
-        try:
-            url = api.format(domain)
-            with httpx.Client(headers=headers, timeout=10) as client:
-                response = client.get(url)
-                if response.status_code == 200:
-                    data = response.json()
-                    if data:
-                        return data  # Return if valid data found
-        except Exception as e:
-            print(f"⚠️ API request failed: {api} | Error: {e}")
-
-    return None  # Return None if no data is found
-
-@Client.on_message(filters.command("url", [".", "/"]))
-async def cmd_url(client, message):
-    """Handles the /url command to fetch website details from public APIs."""
-    args = message.text.split(maxsplit=1)
-    if len(args) < 2:
-        await message.reply_text("❌ Usage: /url <website_url>")
-        return
-    
-    website = args[1].strip()
-
-    if not re.match(r"https?://", website):
-        await message.reply_text("❌ Invalid URL. Please enter a valid website URL (e.g., https://example.com).")
+async def url_lookup(update, context):
+    if len(context.args) != 1:
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id, 
+            text="Please provide a valid URL. Example: /url https://www.example.com"
+        )
         return
 
-    # Show processing message
-    processing_msg = await message.reply_text("🔄 *Processing...*\n_Please wait while we fetch data..._", parse_mode="Markdown")
+    url = context.args[0]
+    try:
+        processing_message = await context.bot.send_message(
+            chat_id=update.effective_chat.id, text="Processing your site..."
+        )
+        
+        result = await get_website_info(url)
+        message = (f"🔍 Gateways Fetched Successfully ✅\n━━━━━━━━━━━━━\n"
+                   f"🚀 URL: {result['url']}\n"
+                   f"🚀 Payment Gateways: {result['payment_gateways']}\n"
+                   f"🚀 Captcha: {result['captcha']}\n"
+                   f"🚀 Cloudflare: {result['cloudflare']}\n"
+                   f"🚀 GraphQL: {result['graphql']}\n"
+                   f"🚀 Platform: {result['platform']}\n"
+                   f"🚀 Error Logs: {result['error_logs']}\n"
+                   f"🚀 Status: {result['status']}\n\n"
+                   "🤖 Bot by: BADNAAM")
+        
+        # Replace values for better readability
+        message = (message.replace("Yes", "True 🙂")
+                         .replace("No", "False 🔥")
+                         .replace("Possible errors detected", "True 🙂")
+                         .replace("None detected", "False 🔥")
+                         .replace("Error", "False 🔥")
+                         .replace("Not detected", "False 🔥"))
 
-    # Fetch data
-    data = fetch_data(website)
+        await context.bot.edit_message_text(
+            chat_id=update.effective_chat.id, 
+            message_id=processing_message.message_id, 
+            text=message
+        )
+    except Exception as e:
+        await context.bot.edit_message_text(
+            chat_id=update.effective_chat.id, 
+            message_id=processing_message.message_id, 
+            text=f"An error occurred: {e}"
+        )
 
-    if not data:
-        await processing_msg.edit_text("❌ No data found from any public API.")
-        return
+async def get_website_info(url):
+    try:
+        scraper = cloudscraper.create_scraper()
+        response = scraper.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'html.parser')
 
-    # Extract relevant data safely
-    payment_gateways = data.get("payment_gateways", "N/A")
-    security = data.get("security") or {}  # Ensures security key exists
-    protection = data.get("protection") or {}
-    technology = data.get("technology") or {}
-    logs = data.get("logs") or {}
+        payment_gateways = detect_payment_gateways(soup)
+        captcha = detect_captcha(soup)
+        cloudflare = detect_cloudflare(response)
+        graphql = await detect_graphql(url)
+        platform = detect_platform(soup)
+        error_logs = detect_error_logs(response.text)
+        status = response.status_code
 
-    result = f"""
-🔍 *Gateways Fetched Successfully ✅*
-━━━━━━━━━━━━━
-🚀 *URL:* `{website}`
-🚀 *Payment Gateways:* `{payment_gateways}`
-🚀 *Captcha:* `{security.get('captcha', 'False')}`
-🚀 *Cloudflare:* `{protection.get('cloudflare', 'False')}`
-🚀 *GraphQL:* `{technology.get('graphql', 'False')}`
-🚀 *Platform:* `{technology.get('platform', 'N/A')}`
-🚀 *Error Logs:* `{logs.get('error', 'N/A')}`
-🚀 *Status:* `{data.get('status', 'Unknown')}`
+        return {
+            'url': url,
+            'payment_gateways': ', '.join(payment_gateways) if payment_gateways else 'False 🔥',
+            'captcha': captcha,
+            'cloudflare': cloudflare,
+            'graphql': graphql,
+            'platform': platform,
+            'error_logs': error_logs,
+            'status': status
+        }
+    except httpx.RequestError as e:
+        return {
+            'url': url,
+            'payment_gateways': 'False 🔥',
+            'captcha': 'False 🔥',
+            'cloudflare': 'False 🔥',
+            'graphql': 'False 🔥',
+            'platform': 'False 🔥',
+            'error_logs': str(e),
+            'status': 'False 🔥'
+        }
 
-👤 *Checked By:* [{message.from_user.first_name}](tg://user?id={message.from_user.id})  
-🤖 *Bot by:* [【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎](tg://user?id=7028548502)
-"""
+def detect_payment_gateways(soup):
+    gateways = []
+    if soup.find(string=re.compile(r'stripe', re.IGNORECASE)):
+        gateways.append("Stripe")
+    if soup.find(string=re.compile(r'paypal', re.IGNORECASE)):
+        gateways.append("PayPal")
+    if soup.find(string=re.compile(r'razorpay', re.IGNORECASE)):
+        gateways.append("Razorpay")
+    return gateways
 
-    # Update the processing message with final data
-    await processing_msg.edit_text(result, parse_mode="Markdown")
+def detect_captcha(soup):
+    if soup.find('div', {'class': 'g-recaptcha'}) or soup.find('iframe', {'src': re.compile(r'google\.com/recaptcha')}):
+        return "reCAPTCHA"
+    elif soup.find('input', {'name': 'h-captcha-response'}):
+        return "hCaptcha"
+    return "False 🔥"
+
+def detect_cloudflare(response):
+    if 'cloudflare' in response.headers.get('Server', '').lower() or 'cf-ray' in response.headers:
+        return "True 🙂"
+    return "False 🔥"
+
+async def detect_graphql(url):
+    try:
+        async with httpx.AsyncClient(timeout=5) as client:
+            response = await client.post(f"{url}/graphql", json={"query": "{ __schema { types { name } } }"})
+        if response.status_code == 200 and "data" in response.json():
+            return "True 🙂"
+    except Exception:
+        pass
+    return "False 🔥"
+
+def detect_platform(soup):
+    if soup.find('meta', {'name': 'generator'}):
+        return soup.find('meta', {'name': 'generator'})['content']
+    if soup.find('link', {'rel': 'stylesheet', 'href': re.compile(r'/wp-content/')}):
+        return "WordPress"
+    if soup.find('link', {'rel': 'stylesheet', 'href': re.compile(r'/skin/frontend/')}):
+        return "Magento"
+    return "Unknown"
+
+def detect_error_logs(text):
+    return "True 🙂" if re.search(r'error|exception|warning', text, re.IGNORECASE) else "False 🔥"
+
+async def main():
+    app = Application.builder().token(BOT_TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("url", url_lookup))
+    print("Bot is running...")
+    await app.run_polling()
+
+if __name__ == "__main__":
+    asyncio.run(main())
