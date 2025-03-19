@@ -6,7 +6,6 @@ from TOOLS.check_all_func import *
 import asyncio
 import json
 import httpx
-import Application, CommandHandler
 from bs4 import BeautifulSoup
 import cloudscraper
 
