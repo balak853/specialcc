@@ -6,15 +6,10 @@ from TOOLS.check_all_func import *
 import asyncio
 import json
 import httpx
-import telegram
-from telegram.ext import Application, CommandHandler
+import Application, CommandHandler
 from bs4 import BeautifulSoup
 import cloudscraper
 
-# Load bot token from config.json
-with open("config.json", "r") as f:
-    config = json.load(f)
-BOT_TOKEN = config["bot_token"]
 
 async def start(update, context):
     await context.bot.send_message(
@@ -147,14 +142,4 @@ def detect_platform(soup):
     return "Unknown"
 
 def detect_error_logs(text):
-    return "True 🙂" if re.search(r'error|exception|warning', text, re.IGNORECASE) else "False 🔥"
-
-async def main():
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("url", url_lookup))
-    print("Bot is running...")
-    await app.run_polling()
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    return "True 🙂" if re.search(r'error|exception|warning', text, re.IGNORECASE) else "False 🔥
