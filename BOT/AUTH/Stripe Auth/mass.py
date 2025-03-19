@@ -17,7 +17,7 @@ from TOOLS.getcc_for_mass import *
 async def mchkfunc(fullcc , user_id ):
     try:  
         proxies  = await get_proxy_format()
-        session  = httpx.AsyncClient(timeout = 30 , proxies = proxies ) 
+        session  = httpx.AsyncClient(timeout = 30 ) 
         result   = await create_cvv_charge(fullcc , session) 
         getresp  = await get_charge_resp(result, user_id, fullcc)
         response = getresp["response"]
