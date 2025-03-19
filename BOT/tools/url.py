@@ -1,6 +1,6 @@
 import httpx
+import re
 from pyrogram import Client, filters
-from bs4 import BeautifulSoup
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
 
@@ -10,13 +10,19 @@ PUBLIC_APIS = [
     "https://ipwhois.app/json/{}"
 ]
 
+def extract_domain(url):
+    """Extracts the domain name from a given URL."""
+    match = re.search(r"https?://([^/]+)", url)
+    return match.group(1) if match else url
+
 def fetch_data(website):
     """Fetches data from multiple public APIs and returns the first valid response."""
     headers = {"User-Agent": "Mozilla/5.0"}
-    
+    domain = extract_domain(website)  # Ensure we're passing just the domain
+
     for api in PUBLIC_APIS:
         try:
-            url = api.format(website)
+            url = api.format(domain)
             with httpx.Client(headers=headers, timeout=10) as client:
                 response = client.get(url)
                 if response.status_code == 200:
@@ -38,39 +44,42 @@ async def cmd_url(client, message):
     
     website = args[1].strip()
 
-    if not website.startswith(("http://", "https://")):
+    if not re.match(r"https?://", website):
         await message.reply_text("❌ Invalid URL. Please enter a valid website URL (e.g., https://example.com).")
         return
 
-    # ⏳ Send processing message
-    processing_msg = await message.reply_text("🔄 Fetching data, please wait...")
+    # Show processing message
+    processing_msg = await message.reply_text("🔄 *Processing...*\n_Please wait while we fetch data..._", parse_mode="Markdown")
 
     # Fetch data
     data = fetch_data(website)
 
-    # Delete processing message
-    await processing_msg.delete()
-
     if not data:
-        await message.reply_text("❌ No data found from any public API.")
+        await processing_msg.edit_text("❌ No data found from any public API.")
         return
 
     # Extract relevant data safely
+    payment_gateways = data.get("payment_gateways", "N/A")
+    security = data.get("security") or {}  # Ensures security key exists
+    protection = data.get("protection") or {}
+    technology = data.get("technology") or {}
+    logs = data.get("logs") or {}
+
     result = f"""
 🔍 *Gateways Fetched Successfully ✅*
 ━━━━━━━━━━━━━
 🚀 *URL:* `{website}`
-🚀 *Payment Gateways:* `{data.get('payment_gateways', 'N/A')}`
-🚀 *Captcha:* `{data.get('security', {}).get('captcha', 'False')}`
-🚀 *Cloudflare:* `{data.get('protection', {}).get('cloudflare', 'False')}`
-🚀 *GraphQL:* `{data.get('technology', {}).get('graphql', 'False')}`
-🚀 *Platform:* `{data.get('technology', {}).get('platform', 'N/A')}`
-🚀 *Error Logs:* `{data.get('logs', {}).get('error', 'N/A')}`
+🚀 *Payment Gateways:* `{payment_gateways}`
+🚀 *Captcha:* `{security.get('captcha', 'False')}`
+🚀 *Cloudflare:* `{protection.get('cloudflare', 'False')}`
+🚀 *GraphQL:* `{technology.get('graphql', 'False')}`
+🚀 *Platform:* `{technology.get('platform', 'N/A')}`
+🚀 *Error Logs:* `{logs.get('error', 'N/A')}`
 🚀 *Status:* `{data.get('status', 'Unknown')}`
 
 👤 *Checked By:* [{message.from_user.first_name}](tg://user?id={message.from_user.id})  
 🤖 *Bot by:* [【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎](tg://user?id=7028548502)
 """
 
-    # Send final result (This message will NOT be deleted)
-    await message.reply_text(result, parse_mode="Markdown")
+    # Update the processing message with final data
+    await processing_msg.edit_text(result, parse_mode="Markdown")
