@@ -61,7 +61,7 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         start = time.perf_counter()
         proxies = await get_proxy_format()
         session = httpx.AsyncClient(
-            timeout=30, proxies=proxies, follow_redirects=True)
+            timeout=30, follow_redirects=True)
         result = await create_cvv_charge(fullcc, session)
         getbin = await get_bin_details(cc)
         getresp = await get_charge_resp(result, user_id, fullcc)
@@ -98,6 +98,9 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
 
 𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+
+𝗥𝗲𝗾 𝗯𝘆:- <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
+𝗗𝗲𝘃 𝗯𝘆:- <a href="tg://user?id=7297683223">Goku</a>
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
