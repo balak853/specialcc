@@ -10,15 +10,32 @@ async def get_charge_resp(result, user_id, fullcc):
             status   = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
             response = result
             hits     = "NO"
-        
+
+
             if (
-                    "Amount must be at least $4.00 hkd" in result
-                ):
+                '"success":true,"data":"status":"succeeded"' in result
+                or 'succeeded' in result
+            ):
                     status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                    # response = "Approved ✅"
-                    response = "Auth Success"
+                    response = "Stripe Auth 🔥"
                     hits = "YES"
-                    await forward_resp(fullcc, "Stripe AUTH", response)
+
+            elif (
+                '{"success":true,"data":{"status":"requires_action"' in result
+                or 'succeeded' in result
+            ):
+                    status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
+                    response = "3D 🔥"
+                    hits = "YES"
+                    
+
+
+
+
+
+
+
+
 
             elif ("Your card was declined" in result):
                     status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
