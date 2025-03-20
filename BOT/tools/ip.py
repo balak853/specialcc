@@ -82,7 +82,7 @@ Message: Unable to fetch IP info. Check if the IP is valid.
 🌏 <b>Continent:</b> <code>{Continent}</code>
 ━━━━━━━━━━━━━━
 <b>Checked By:</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
-<b>Bot by:</b> <a href="tg://user?id=6745804180">Toͥnmͣoͫy</a>
+<b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
 """
         await message.reply_text(resp)
 
