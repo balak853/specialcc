@@ -90,8 +90,8 @@ Unsupported card type."""
 
 𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
 
-𝗥𝗲𝗾 : <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾
-𝐎𝐰𝐧𝐞𝐫 - <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
+<b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
 
 """
         await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
