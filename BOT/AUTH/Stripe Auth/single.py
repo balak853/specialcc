@@ -99,8 +99,9 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
 
 𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
 
-<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
-<b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+𝗥𝗲𝗾 𝗯𝘆:-<a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾ 
+𝗢𝘄𝗻𝗲𝗿:- <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+</b>
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
