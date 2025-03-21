@@ -1,11 +1,23 @@
 {
-    "DEAD_SK_KEY": "",
-    "DEAD_PK_KEY": "",
-    "DEAD_CURRENCY": "",
-    "LIVE_SK": "sk_live_51IorySBA2",
+    "DEAD_SK_KEY": "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",
+    "DEAD_PK_KEY": "pk_live_51IorySBA2eNwT6B1OsxRmXCS7qTHFiaKZxMs4vBbHCmicW210yNxkJu6XeD1Ns1m5XAkFJCeuwakvrmF3gWekQyW00I1dIiqcu",
+    "DEAD_CURRENCY": "USD",
+    "LIVE_SK": "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",
     "DEAD_AMOUNT": "100",
     "WOO_PRODUCT_ID": "12337",
-    "AUTO_SHOPIFY_SO": "https://urth.co/collections/accessories/products/urth-glass-cleaning-spray",
+    "AUTO_SHOPIFY_SO": "https://stickersbysuzie.com/products/tummyache-survivor-sticker?variant=46202157990075",
     "gate_active": [
+        "/py",
+        ".py",
+        "/mpy",
+        ".mpy",
+        "/pytxt",
+        ".pytxt",
+        "/pp",
+        ".pp",
+        "/mpp",
+        ".mpp",
+        "/pptxt",
+        ".pptxt"
     ]
 }
