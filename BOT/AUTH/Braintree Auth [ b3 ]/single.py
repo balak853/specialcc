@@ -11,7 +11,7 @@ from .gate import *
 
 
 @Client.on_message(filters.command("b3", [".", "/"]))
-async def pp_auth_cmd(Client, message):
+async def b3_auth_cmd(Client, message):
     try:
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
@@ -40,7 +40,7 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         firstresp = f"""
 ↯ Checking.
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
 - 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
 - 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□
 </b>
@@ -51,7 +51,7 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         secondresp = f"""
 ↯ Checking..
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
 - 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
 - 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□
 """
@@ -59,10 +59,10 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         secondchk = await Client.edit_message_text(message.chat.id, firstchk.id, secondresp)
 
         start = time.perf_counter()
-        proxies = await get_proxy_format()
-        session = httpx.AsyncClient(
-            timeout=30, follow_redirects=True)
-        result = await create_cvv_charge(fullcc, session)
+        proxies = await get_proxy_format()  # Pass user_id here
+
+        session = httpx.AsyncClient(timeout=30, proxies=proxies, follow_redirects=True)
+        result = await create_braintree_auth(fullcc, session)
         getbin = await get_bin_details(cc)
         getresp = await get_charge_resp(result, user_id, fullcc)
         status = getresp["status"]
@@ -71,7 +71,7 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         thirdresp = f"""
 ↯ Checking...
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
+- 𝗖𝗮𝗿𝗱 - <code>{fullcc}</code> 
 - 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
 - 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■■
 """
@@ -86,7 +86,8 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         flag = getbin[5]
         currency = getbin[6]
 
-        finalresp = f"""
+        # Split the final response into shorter parts
+        finalresp1 = f"""
 {status}
 
 𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
@@ -98,20 +99,16 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
 
 𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-
-𝗥𝗲𝗾 𝗯𝘆:- <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
-𝗗𝗲𝘃 𝗯𝘆:- <a href="tg://user?id=7028548502">BADNAAM</a>
 """
         await asyncio.sleep(0.5)
-        await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
+        await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp1)
+
         await setantispamtime(user_id)
         await deductcredit(user_id)
         if status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅" or status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅":
-            await sendcc(finalresp, session)
+            await sendcc(finalresp1, session)
         await session.aclose()
 
-    except:
+    except Exception as e:
         import traceback
         await error_log(traceback.format_exc())
-
-        
