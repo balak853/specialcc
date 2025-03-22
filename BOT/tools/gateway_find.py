@@ -60,7 +60,7 @@ def format_result(result):
         f"🚀 Platform: <code>{result['platform'] if result['platform'] else 'None'}</code>\n"
         f"🚀 Error Logs: <code>{result['error'] if result['error'] else 'None'}</code>\n"
         f"🚀 Status: <code>{result['http_status']}</code>\n\n"
-        f"🤖 Bot by: <a href=\"tg://user?id=7113416108\">н ɪ ✟ ʟ є я</a>\n"
+        f"🤖 Bot by: <a href=\"tg://user?id=7028548502\">亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼 Bᴀʟᴀᴋ (◕‿◕ </a>
     )
     return formatted_result
 
