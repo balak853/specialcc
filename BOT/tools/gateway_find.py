@@ -50,19 +50,20 @@ def format_result(result):
     cloudflare_status = "True 🙂" if result['cloudflare'] else "False 🔥"
     
     formatted_result = (
-        f"🔍 Gateways Fetched Successfully ✅\n"
-        f"━━━━━━━━━━━━━\n"
-        f"🚀 URL: <code>{result['url']}</code>\n"
-        f"🚀 Payment Gateways: <code>{', '.join(result['payment_gateways']) if result['payment_gateways'] else 'None'}</code>\n"
-        f"🚀 Captcha: <code>{captcha_status}</code>\n"
-        f"🚀 Cloudflare: <code>{cloudflare_status}</code>\n"
-        f"🚀 GraphQL: <code>{result['graphql']}</code>\n"
-        f"🚀 Platform: <code>{result['platform'] if result['platform'] else 'None'}</code>\n"
-        f"🚀 Error Logs: <code>{result['error'] if result['error'] else 'None'}</code>\n"
-        f"🚀 Status: <code>{result['http_status']}</code>\n\n"
-        f"🤖 Bot by: <a href=\"tg://user?id=7028548502\">亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼 Bᴀʟᴀᴋ (◕‿◕ </a>
-    )
-    return formatted_result
+    f"🔍 Gateways Fetched Successfully ✅\n"
+    f"━━━━━━━━━━━━━\n"
+    f"🚀 URL: <code>{result['url']}</code>\n"
+    f"🚀 Payment Gateways: <code>{', '.join(result['payment_gateways']) if result['payment_gateways'] else 'None'}</code>\n"
+    f"🚀 Captcha: <code>{captcha_status}</code>\n"
+    f"🚀 Cloudflare: <code>{cloudflare_status}</code>\n"
+    f"🚀 GraphQL: <code>{result['graphql']}</code>\n"
+    f"🚀 Platform: <code>{result['platform'] if result['platform'] else 'None'}</code>\n"
+    f"🚀 Error Logs: <code>{result['error'] if result['error'] else 'None'}</code>\n"
+    f"🚀 Status: <code>{result['http_status']}</code>\n\n"
+    f"🤖 Bot by: <a href=\"tg://user?id=7028548502\">亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼 Bᴀʟᴀᴋ (◕‿◕)</a>"
+)
+return formatted_result
+
 
 def analyze_site(url):
     result = {'url': url, 'payment_gateways': [], 'captcha': False, 'cloudflare': False,
