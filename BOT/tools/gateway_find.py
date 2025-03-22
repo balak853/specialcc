@@ -63,8 +63,6 @@ def format_result(result):
     f"🤖 Bot by: <a href=\"tg://user?id=7028548502\">亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼 Bᴀʟᴀᴋ (◕‿◕)</a>"
 )
 return formatted_result
-
-
 def analyze_site(url):
     result = {'url': url, 'payment_gateways': [], 'captcha': False, 'cloudflare': False,
               'graphql': False, 'platform': None, 'http_status': None, 'error': None}
