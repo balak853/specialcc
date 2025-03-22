@@ -25,7 +25,7 @@ async def get_charge_resp(result, user_id, fullcc):
                 or 'succeeded' in result
             ):
                     status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                    response = "3D 🔥"
+                    response = "Payment method successfully added."
                     hits = "YES"
                     
 
