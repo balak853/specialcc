@@ -76,9 +76,9 @@ Message: Unable to fetch SK info. Check if the SK is valid.
    - Available Balance: {available_balance}
    - Pending Balance: {pending_balance}
 ━━━━━━━━━━━━━━
-<b>Checked By:</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
-<b>Bot by:</b> <a href="tg://user?id=6745804180">Toͥnmͣoͫy</a>
-"""
+Checked By <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> 
+Bot by - <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+</b>"""
         await message.reply_text(resp)
 
     except Exception as e:
