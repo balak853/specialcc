@@ -1,80 +1,104 @@
 import httpx
 import random
+import asyncio
 from pyrogram import Client, filters
 from bs4 import BeautifulSoup
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
 
-# List of public APIs for generating fake information
-FAKE_APIS = [
-    "https://randomuser.me/api/",
-    "https://fakerapi.it/api/v1/persons",
-    "https://api.namefake.com/"
-]
+FAKE_APIS = {
+    "randomuser": "https://randomuser.me/api/?nat=",
+    "namefake": "https://api.namefake.com/"
+}
+
+# Country Code Mapping
+COUNTRY_MAP = {
+    "us": "United States",
+    "in": "India",
+    "gb": "United Kingdom",
+    "ca": "Canada",
+    "au": "Australia",
+    "de": "Germany",
+    "fr": "France",
+    "it": "Italy",
+    "es": "Spain",
+    "nl": "Netherlands",
+    "br": "Brazil",
+    "mx": "Mexico",
+    "ru": "Russia",
+    "jp": "Japan",
+    "cn": "China",
+    "kr": "South Korea",
+    "za": "South Africa",
+    "ae": "United Arab Emirates"
+}
 
 async def fetch_fake_data_from_api(country_code):
-    for api_url in FAKE_APIS:
+    country_name = COUNTRY_MAP.get(country_code.lower(), country_code.upper())
+
+    async def fetch(api_url):
         try:
+            if "randomuser" in api_url:
+                api_url += country_code  # Append country code for country-specific data
+            
             async with httpx.AsyncClient(headers={"User-Agent": "Mozilla/5.0"}) as client:
                 response = await client.get(api_url)
                 if response.status_code == 200:
-                    data = response.json()
-                    return parse_fake_data(api_url, data, country_code)
-        except Exception as e:
-            continue  # If an API fails, try the next one
-    return None  # If all APIs fail, return None
+                    return api_url, response.json()
+        except Exception:
+            return None, None
 
+    tasks = [fetch(api) for api in FAKE_APIS.values()]
+    results = await asyncio.gather(*tasks)
 
-def parse_fake_data(api_url, data, country_code):
-    if "randomuser.me" in api_url:
-        user = data["results"][0]
-        return {
-            "name": f"{user['name']['first']} {user['name']['last']}",
-            "gender": user["gender"].title(),
-            "street": f"{user['location']['street']['number']} {user['location']['street']['name']}",
-            "city": user["location"]["city"],
-            "state": user["location"]["state"],
-            "zipcode": user["location"]["postcode"],
-            "phone": user["phone"],
-            "country": user["location"]["country"]
-        }
-    elif "fakerapi.it" in api_url:
-        user = random.choice(data["data"])
-        return {
-            "name": f"{user['firstname']} {user['lastname']}",
-            "gender": "N/A",
-            "street": "N/A",
-            "city": user["city"],
-            "state": "N/A",
-            "zipcode": user["zipcode"],
-            "phone": user["phone"],
-            "country": country_code.upper()
-        }
-    elif "namefake.com" in api_url:
-        return {
-            "name": data["name"],
-            "gender": data["gender"].title(),
-            "street": data["address"],
-            "city": data["city"],
-            "state": data["state"],
-            "zipcode": data["zip"],
-            "phone": data["phone_h"],
-            "country": country_code.upper()
-        }
+    for api_url, data in results:
+        if data:
+            parsed_data = parse_fake_data(api_url, data, country_name)
+            if parsed_data:
+                return parsed_data
+    return None  # If all fail
+
+def parse_fake_data(api_url, data, country_name):
+    try:
+        if "randomuser.me" in api_url:
+            user = data["results"][0]
+            return {
+                "name": f"{user['name']['first']} {user['name']['last']}",
+                "gender": user["gender"].title(),
+                "street": f"{user['location']['street']['number']} {user['location']['street']['name']}",
+                "city": user["location"]["city"],
+                "state": user["location"]["state"],
+                "zipcode": user["location"]["postcode"],
+                "phone": user["phone"],
+                "country": country_name
+            }
+        elif "namefake.com" in api_url:
+            return {
+                "name": data["name"],
+                "gender": data["gender"].title(),
+                "street": data["address"],
+                "city": data["city"],
+                "state": data["state"],
+                "zipcode": data["zip"],
+                "phone": data["phone_h"],
+                "country": country_name
+            }
+    except Exception:
+        return None
     return None
 
-
 @Client.on_message(filters.command("fake", [".", "/"]))
-async def cmd_fake(Client, message):
+async def cmd_fake(client, message):
     try:
-        checkall = await check_all_thing(Client, message)
+        checkall = await check_all_thing(client, message)
         if not checkall[0]:
             return
 
         role = checkall[1]
-        country_code = message.text.split(" ")[1].lower() if len(message.text.split(" ")) > 1 else "us"
+        args = message.text.split(" ")
+        country_code = args[1].lower() if len(args) > 1 else "us"
+
         fake_data = await fetch_fake_data_from_api(country_code)
-        
         if not fake_data:
             await message.reply_text("❌ Failed to fetch fake data. Try again later.")
             return
