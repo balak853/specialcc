@@ -47,21 +47,21 @@ async def gen_cmd(client, message):
             cvv = cc_parts[3] if len(cc_parts) > 3 else None
         except IndexError:
             resp = f"""
-Wrong Format ❌
+𝐖𝐫𝐨𝐧𝐠 𝐅𝐨𝐫𝐦𝐚𝐭 ❌
 
-Usage:
-Only Bin
-<code>/gen 447697</code>
+𝐔𝐬𝐚𝐠𝐞:
+𝐎𝐧𝐥𝐲 𝐁𝐢𝐧
+<code>/𝐠𝐞𝐧 447697</code>
 
-With Expiration
-<code>/gen 447697|12</code>
-<code>/gen 447697|12|23</code>
+𝐖𝐢𝐭𝐡 𝐄𝐱𝐩𝐢𝐫𝐚𝐭𝐢𝐨𝐧
+<code>/𝐠𝐞𝐧 447697|12</code>
+<code>/𝐠𝐞𝐧 447697|12|23</code>
 
-With CVV
-<code>/gen 447697|12|23|000</code>
+𝐖𝐢𝐭𝐡 𝐂𝐕𝐕
+<code>/𝐠𝐞𝐧 447697|12|23|000</code>
 
-With Custom Amount
-<code>/gen 447697 100</code>
+𝐖𝐢𝐭𝐡 𝐂𝐮𝐬𝐭𝐨𝐦 𝐀𝐦𝐨𝐮𝐧𝐭
+<code>/𝐠𝐞𝐧 447697 100</code>
 """
             await message.reply_text(resp, message.id)
             return
@@ -72,7 +72,7 @@ With Custom Amount
         except (IndexError, ValueError):
             pass
 
-        delete = await message.reply_text("<b>Generating...</b>", message.id)
+        delete = await message.reply_text("<b>🅶🅴🅽🅴🆁🅰🆃🅸🅽🅶...</b>", message.id)
         start = time.perf_counter()
         session = httpx.AsyncClient(timeout=30)
         getbin = await get_bin_details(cc[:6])
@@ -81,9 +81,9 @@ With Custom Amount
         brand, type_, level, bank, country, flag, currency = getbin
 
         if amount > 10000:
-            resp = """<b>Limit Reached ⚠️
+            resp = """<b>𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 ⚠️
 
-Message: Maximum Generated Amount is 10K.</b>"""
+𝐌𝐞𝐬𝐬𝐚𝐠𝐞: 𝐌𝐚𝐱𝐢𝐦𝐮𝐦 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞𝐝 𝐀𝐦𝐨𝐮𝐧𝐭 𝐢𝐬 10𝐊.</b>"""
             await message.reply_text(resp, message.id)
             return
 
