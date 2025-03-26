@@ -16,7 +16,7 @@ async def pp_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway = "Stripe Auth"
+        gateway = "Stripe Auth ✅[/au]"
 
         if checkall[0] == False:
             return
@@ -25,12 +25,12 @@ async def pp_auth_cmd(Client, message):
         getcc = await getmessage(message)
         if getcc == False:
             resp = f"""<b>
-Gate Name: {gateway} ♻️
-CMD: /b3
+𝙂𝙖𝙩𝙚 𝙉𝙖𝙢𝙚: {gateway} ♻️
+𝘾𝙈𝘿: /au
 
-Message: No CC Found in your input ❌
+𝙈𝙚𝙨𝙨𝙖𝙜𝙚: 𝙉𝙤 𝘾𝘾 𝙁𝙤𝙪𝙣𝙙 𝙞𝙣 𝙮𝙤𝙪𝙧 𝙞𝙣𝙥𝙪𝙩 
 
-Usage: /b3 cc|mes|ano|cvv</b>"""
+𝙐𝙨𝙖𝙜𝙚: /au 𝙘𝙘|𝙢𝙚𝙨|𝙖𝙣𝙤|𝙘𝙫𝙫</𝙗>"""
             await message.reply_text(resp, message.id)
             return
 
@@ -38,22 +38,22 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         fullcc = f"{cc}|{mes}|{ano}|{cvv}"
 
         firstresp = f"""
-↯ Checking.
+↯ 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠.
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□
+⊗ 𝘾𝙖𝙧𝙙 - <code>{fullcc}</code>
+⊗ 𝙎𝙩𝙖𝙩𝙪𝙨 - Checking.
+⊗ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 - ■□□□
 </b>
 """
         await asyncio.sleep(0.5)
         firstchk = await message.reply_text(firstresp, message.id)
 
         secondresp = f"""
-↯ Checking..
+↯ 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠..
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□
+⊗ 𝘾𝙖𝙧𝙙 - <code>{fullcc}</code>
+⊗ 𝙎𝙩𝙖𝙩𝙪𝙨 - Checking.
+⊗ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 - ■■■□
 """
         await asyncio.sleep(0.5)
         secondchk = await Client.edit_message_text(message.chat.id, firstchk.id, secondresp)
@@ -61,19 +61,19 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         start = time.perf_counter()
         proxies = await get_proxy_format()
         session = httpx.AsyncClient(
-            timeout=30, follow_redirects=True)
-        result = await create_cvv_charge(fullcc, session)
+            timeout=30)
+        result = await create_cvv_auth(fullcc, session)
         getbin = await get_bin_details(cc)
         getresp = await get_charge_resp(result, user_id, fullcc)
         status = getresp["status"]
         response = getresp["response"]
 
         thirdresp = f"""
-↯ Checking...
+↯ 𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠...
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■■
+⊗ 𝘾𝙖𝙧𝙙 - <code>{fullcc}</code>
+⊗ 𝙎𝙩𝙖𝙩𝙪𝙨 - Checking.
+⊗ 𝙍𝙚𝙨𝙥𝙤𝙣𝙨𝙚 - ■■■■
 """
         await asyncio.sleep(0.5)
         thirdcheck = await Client.edit_message_text(message.chat.id, secondchk.id, thirdresp)
@@ -87,21 +87,19 @@ Usage: /b3 cc|mes|ano|cvv</b>"""
         currency = getbin[6]
 
         finalresp = f"""
-{status}
+<i>{gateway}</i>
 
-𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲- <i>{gateway}</i>
-𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞- ⤿ <i>{response}</i> ⤾
-
-𝗜𝗻𝗳𝗼- {brand} - {type} - {level}
-𝐁𝐚𝐧𝐤- {bank} 
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
-
-𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-
-𝗥𝗲𝗾 𝗯𝘆:-<a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾ 
-𝗢𝘄𝗻𝗲𝗿:- <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
-</b>
+<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑪𝒂𝒓𝒅- <code>{fullcc}</code> 
+<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑺𝒕𝒂𝒕𝒖𝒔- <i>{status}</i>
+<a href=\"tg://user?id=7317502701\">[仝]</a> 𝑹𝒆𝒔𝒑𝒐𝒏𝒔𝒆- ⤿ {response} ⤾
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑰𝒏𝒇𝒐- {brand} - {type} - {level}
+<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑩𝒂𝒏𝒌- {bank} 
+<a href=\"tg://user?id=7317502701\">[仝]</a> 𝑪𝒐𝒖𝒏𝒕𝒓𝒚- {country} - {flag} - {currency}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑻𝒊𝒎𝒆- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑪𝒉𝒆𝒄𝒌𝒆𝒅 𝑩𝒚:  <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
+<a href=\"tg://user?id=7317502701\">[〠]</a> 𝑩𝒐𝒕 𝑩𝒚 ➺  <a href=\"tg://user?id=7317502701\">〄 𝙎𝙋𝙔𝙭𝙎𝙋𝙔𝘿𝙀</a>
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
