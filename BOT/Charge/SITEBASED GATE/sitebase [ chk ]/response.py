@@ -44,7 +44,7 @@ async def get_charge_resp(result, user_id, fullcc):
             or "transaction_status:SUCCESS" in result.text
         ):
             status   = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-            response = "Thanks for your purchase!🔥"
+            response = "Thanks for your donation!🔥"
             hits     = "YES"
             await forward_resp(fullcc, "sitebase Charge 1$", response)
 
@@ -89,9 +89,6 @@ async def get_charge_resp(result, user_id, fullcc):
         elif "your session has expired" in result.text:
             response = "Session has expired"
 
-
-
-        
         elif (
             "three_d_secure_redirect" in result.text
             or "card_error_authentication_required" in result.text
@@ -122,10 +119,21 @@ async def get_charge_resp(result, user_id, fullcc):
             or "card_decline_rate_limit_exceeded" in result.text
             or "CARD_GENERIC_ERROR" in result.text
             or "Your card was declined." in result.text
+            or "The card was declined" in result.text
 
         ):
             status   = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
             response = "Card was declined"
+            hits     = "NO"
+
+        elif "Sorry, your session has expired" in result.text:
+            status   = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+            response = "Session Expired ❌"
+            hits     = "NO"
+
+        elif "An error occurred while processing your card. Try again in a little bit." in result.text:
+            status   = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+            response = "Try again in a little bit"
             hits     = "NO"
 
         elif "do_not_honor" in result.text:
