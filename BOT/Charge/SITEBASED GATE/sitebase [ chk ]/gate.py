@@ -6,6 +6,7 @@ import re
 from bs4 import BeautifulSoup
 import base64
 import asyncio
+from FUNC.defs import *
 
 def fmt(ccx):
     ccx = ccx.strip()
