@@ -16,7 +16,7 @@ async def stripe_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway="sitebase [1$]✅"
+        gateway="sitebase [1$]"
 
         if checkall[0] == False:
             return
@@ -101,19 +101,17 @@ Usage: /chk cc|mes|ano|cvv</b>"""
         currency = getbin[6]
 
         finalresp = f"""
-<i>{gateway}</i>
+{status}
 
-<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑪𝒂𝒓𝒅- <code>{fullcc}</code> 
-<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑺𝒕𝒂𝒕𝒖𝒔- <i>{status}</i>
-<a href=\"tg://user?id=7317502701\">[仝]</a> 𝑹𝒆𝒔𝒑𝒐𝒏𝒔𝒆- ⤿ {response} ⤾
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑰𝒏𝒇𝒐- {brand} - {type} - {level}
-<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑩𝒂𝒏𝒌- {bank} 
-<a href=\"tg://user?id=7317502701\">[仝]</a> 𝑪𝒐𝒖𝒏𝒕𝒓𝒚- {country} - {flag} - {currency}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-<a href=\"tg://user?id=7317502701\">[そ]</a> 𝑻𝒊𝒎𝒆- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-<a href=\"tg://user?id=7317502701\">[ヸ]</a> 𝑪𝒉𝒆𝒄𝒌𝒆𝒅 𝑩𝒚:  <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
-<a href=\"tg://user?id=7317502701\">[〠]</a> 𝑩𝒐𝒕 𝑩𝒚 ➺  <a href=\"tg://user?id=7317502701\">〄 𝙎𝙋𝙔𝙭𝙎𝙋𝙔𝘿𝙀</a>
+𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲- <i>{gateway}</i>
+𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞- ⤿ <i>{response}</i> ⤾
+
+𝗜𝗻𝗳𝗼- {brand} - {type} - {level}
+𝐁𝐚𝐧𝐤- {bank} 
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
+
+𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
