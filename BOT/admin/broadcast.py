@@ -34,8 +34,7 @@ async def brod_cmd(Client, message):
         user_id     = str(message.from_user.id)
         OWNER_ID    = json.loads(open("FILES/config.json", "r" , encoding="utf-8").read())["OWNER_ID"]
         if user_id not in OWNER_ID:
-            resp = """<b>You Don't Have Permission To Use This Command.    
-Contact Bot Owner @BALAK_TRUSTED !</b>"""
+            resp = """<b>╰┈➤𝑨𝒃𝒆 𝑮𝒂𝒏𝒅𝒖 𝑻𝒖 𝑶𝒘𝒏𝒆𝒓 𝑯𝒂𝒊 𝑲𝒚𝒂 🧡!</b>"""
             await message.reply_text(resp, message.id)
             return
         
