@@ -17,12 +17,12 @@ welcome_gif = [
 
 MESSAGE = """<b>
 👋 Hey {name}!
-Welcome to our group ❤️
+𝐖𝐞𝐥𝐜𝐨𝐦𝐞 𝐭𝐨 𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩 ❤️
 
-📜 Please follow some rules:
-1. 🚫 Don't send unwanted links.
-2. 🚫 Don't spam.
-3. 🚫 Promotion of your channel is prohibited.
+📜 𝐏𝐥𝐞𝐚𝐬𝐞 𝐟𝐨𝐥𝐥𝐨𝐰 𝐬𝐨𝐦𝐞 𝐫𝐮𝐥𝐞𝐬:
+𝟏. 🚫 𝐃𝐨𝐧'𝐭 𝐬𝐞𝐧𝐝 𝐮𝐧𝐰𝐚𝐧𝐭𝐞𝐝 𝐥𝐢𝐧𝐤𝐬.
+𝟐. 🚫 𝐃𝐨𝐧'𝐭 𝐬𝐩𝐚𝐦.
+𝟑. 🚫 𝐏𝐫𝐨𝐦𝐨𝐭𝐢𝐨𝐧 𝐨𝐟 𝐲𝐨𝐮𝐫 𝐜𝐡𝐚𝐧𝐧𝐞𝐥 𝐢𝐬 𝐩𝐫𝐨𝐡𝐢𝐛𝐢𝐭𝐞𝐝.
 
 ✅ Just press /register once to continue using me 🥰
 </b>"""
