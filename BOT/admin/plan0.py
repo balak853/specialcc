@@ -11,7 +11,7 @@ async def cmd_plan0(Client, message):
         user_id     = str(message.from_user.id)
         OWNER_ID    = json.loads(open("FILES/config.json", "r" , encoding="utf-8").read())["OWNER_ID"]
         if user_id not in OWNER_ID:
-            resp = """<b>╰┈➤𝐘𝐨𝐮 𝐚𝐫𝐞 𝐧𝐨𝐭 𝐭𝐡𝐞 𝐁𝐨𝐬𝐬 ❤️!</b>"""
+            resp = """<b>╰┈➤Abe Gandu Tu Owner Hai Kya 🧡!</b>"""
             await message.reply_text(resp, message.id)
             return
 
