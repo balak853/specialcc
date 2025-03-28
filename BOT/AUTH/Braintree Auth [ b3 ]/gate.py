@@ -4,7 +4,6 @@ import random
 import re
 import string
 import time
-import names
 import uuid
 from FUNC.defs import *
 from concurrent.futures import ThreadPoolExecutor
