@@ -26,7 +26,7 @@ Type /register to Continue
             return False , False , False
 
         if any(command in message.text for command in gate_active):
-            resp = "<b>This gate not available now, please try later 👍</b>"
+            resp = "<b>The Gate Is Not Available For The Use Right Now Nigga ❌</b>"
             await message.reply_text(resp, reply_to_message_id=message.id)
             return False, False, False
 
@@ -45,9 +45,10 @@ Type /register to Continue
 Premium Users Required ⚠️
 
 Message: Only Premium Users are Allowed to use bot in Personal . Although You Can Use Bot Free Here https://t.me/+HKyysBkUx8llYTY9
-Buy Premium Plan Using /buy to Continue
+
+Buy Premium Plan Using /buy 
 </b>"""
-            await message.reply_text(resp ,  reply_to_message_id = message.id)
+            await message.reply_text(resp ,  reply_to_message_id = message.id, disable_web_page_preview=True)
             return False , False
 
         if (
@@ -58,9 +59,9 @@ Buy Premium Plan Using /buy to Continue
             resp = f"""<b>
 Unauthorized Chats ⚠️
 
-Message: Only Chats Approved By My Master Can Only Use Me . To Get Approved Your Chats Follow The Steps .
+Message: Only Chats Approved By @BALAK_TRUSTED Can Only Use Me . To Get Approve Your Chat Follow The Steps .
 
-Type /howgp to Know The Step
+Type /howgp to Know The Steps
 </b>"""
             await message.reply_text(resp ,  reply_to_message_id = message.id)
             return False , False
@@ -76,12 +77,12 @@ Type /buy to Recharge
             await message.reply_text(resp ,  reply_to_message_id = message.id)
             return False , False
 
-        if status == "PREMIUM" and count_antispam < 5:
+        if status == "ELITE" and count_antispam < 5:
             after = 5 - count_antispam
             resp = f"""<b>
 Antispam Detected ⚠️
 
-Message: You Are Doing things Very Fast . Try After {after}s to Use Me Again .
+Message: Nigga You Are Spamming Very  Fast . Try After {after}s to Use Me Again .
 
 Reduce Antispam Time /buy Using Paid Plan
 </b>"""
@@ -93,7 +94,7 @@ Reduce Antispam Time /buy Using Paid Plan
             resp = f"""<b>
 Antispam Detected ⚠️
 
-Message: You Are Doing things Very Fast . Try After {after}s to Use Me Again .
+Message: Nigga You Are Spamming Very Fast . Try After {after}s to Use Me Again .
 
 Reduce Antispam Time /buy Using Paid Plan
 </b>"""
@@ -142,9 +143,10 @@ Type /register to Continue
 Premium Users Required ⚠️
 
 Message: Only Premium Users are Allowed to use bot in Personal . Although You Can Use Bot Free Here https://t.me/+HKyysBkUx8llYTY9
-Buy Premium Plan Using /buy to Continue
+
+Buy Premium Plan Using /buy
 </b>"""
-            await message.reply_text(resp , message_id=message.id)
+            await message.reply_text(resp , message_id=message.id, disable_web_page_preview=True)
             return False , False
 
         if (
@@ -155,9 +157,9 @@ Buy Premium Plan Using /buy to Continue
             resp = f"""<b>
 Unauthorized Chats ⚠️
 
-Message: Only Chats Approved By My Master Can Only Use Me . To Get Approved Your Chats Follow The Steps .
+Message: Only Chats Approved By @BALAK_TRUSTED Can Only Use Me . To Get Approve Your Chat Follow The Steps .
 
-Type /howgp to Know The Step
+Type /howgp to Know The Steps
 </b>"""
             await message.reply_text(resp ,  reply_to_message_id = message.id)
             return False , False
@@ -168,7 +170,7 @@ Type /howgp to Know The Step
         import traceback
         await error_log(traceback.format_exc())
         try:
-            await message.reply_text("Try Again later" ,  reply_to_message_id = message.id)
+            await message.reply_text("Request Failed ❌" ,  reply_to_message_id = message.id)
         except:
             pass
         return False , False
