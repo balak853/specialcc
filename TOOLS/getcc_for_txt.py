@@ -21,12 +21,12 @@ async def getcc_for_txt(file_name, role):
             resp = f"""<b>
 Limit Reached ⚠️
 
-Message: Your Can Check 1500 CC at a Time . Buy Plan to Increase Your Limit .
+Message: Your Can Check 1500 CC at a Time .  Buy Plan To Increase Your Limit .
 
 Type /buy For Paid Plan
 </b>"""
             return False, resp
-        if (role == "PREMIUM" or role == "LIFETIME") and len(ccs) > 3001:            
+        if (role == "ELITE" or role == "LIFETIME") and len(ccs) > 3001:            
             resp = f"""<b>
 Limit Reached ⚠️
 
@@ -46,4 +46,4 @@ Message: We Are Unable to Find Any CC Details From Your Input . Provide CC's Det
             return True, ccs
 
     except:
-        return False , "Try Again Later"
+        return False , "Failed To Retrieve ❌"
