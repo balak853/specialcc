@@ -4,22 +4,26 @@ from pyrogram import Client, filters
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
 
-import pandas as pd  # Using Pandas for faster CSV lookup
-
-# Load BIN data once into memory for faster access
-BIN_DATA = pd.read_csv('FILES/bins_all.csv', dtype=str).set_index('bin', drop=False)
-
-def get_bin_info_from_csv(fbin):
+async def singlebinget(message):
     try:
-        if fbin in BIN_DATA.index:
-            row = BIN_DATA.loc[fbin]
-            return {
-                "bin": row["bin"], "country": row["country"], "flag": row["flag"],
-                "brand": row["brand"], "type": row["type"], "level": row["level"],
-                "bank": row["bank"], "currency": row.get("currency", "N/A")
-            }
+        parts = message.text.split()
+        return (parts[1], None, None, None) if len(parts) >= 2 else False
+    except Exception:
+        return False
+
+def get_bin_info_from_csv(fbin, csv_file='FILES/bins_all.csv'):
+    try:
+        with open(csv_file, mode='r', encoding='utf-8') as file:
+            reader = csv.reader(file)
+            for row in reader:
+                if row[0] == fbin:
+                    return {
+                        "bin": row[0], "country": row[1], "flag": row[2],
+                        "brand": row[3], "type": row[4], "level": row[5], "bank": row[6], "currency": row[7]
+                    }
     except Exception as e:
-        print(f"Error fetching BIN info: {e}")
+        print(f"CSV Error: {e}")
+        return None
     return None
 
 def get_country_name(code, fallback_country_name):
@@ -29,13 +33,6 @@ def get_country_name(code, fallback_country_name):
     except Exception as e:
         print(f"Country Lookup Error: {e}")
         return fallback_country_name
-
-async def singlebinget(message):
-    try:
-        parts = message.text.split()
-        return (parts[1], None, None, None) if len(parts) >= 2 else False
-    except Exception:
-        return False
 
 @Client.on_message(filters.command("bin", [".", "/"]))
 async def cmd_bin(client, message):
