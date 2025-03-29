@@ -35,7 +35,7 @@ async def updateuserinfo(user_id, module, value):
 
 
 async def premiumuser(user_id):
-    usersdb.update_one({"id": user_id}, {"$set": {"status": "PREMIUM"}})
+    usersdb.update_one({"id": user_id}, {"$set": {"status": "ELITE"}})
 
 
 async def freeuser(user_id):
@@ -136,7 +136,7 @@ async def csplan(user_id):
     await check_negetive_credits(user_id)
     get_user_info = await getuserinfo(user_id)
     if get_user_info["status"] == "FREE":
-        usersdb.update_one({"id": user_id}, {"$set": {"status": "PREMIUM"}})
+        usersdb.update_one({"id": user_id}, {"$set": {"status": "ELITE"}})
 
     usersdb.update_one({"id": user_id}, {"$set": {"plan": "Custom Plan ∞"}})
     getvalidity  = str(date.today() + timedelta(days=7)).split("-")
@@ -153,9 +153,9 @@ async def getplan1(user_id):
     await check_negetive_credits(user_id)
     get_user_info = await getuserinfo(user_id)
     if get_user_info["status"] == "FREE":
-        usersdb.update_one({"id": user_id}, {"$set": {"status": "PREMIUM"}})
+        usersdb.update_one({"id": user_id}, {"$set": {"status": "ELITE"}})
 
-    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Starter Plan 7$ ∞"}})
+    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Starter Plan $14 ∞"}})
     getvalidity  = str(date.today() + timedelta(days=7)).split("-")
     yy , mm , dd = getvalidity[0], getvalidity[1], getvalidity[2]
     validity     = f"{dd}-{mm}-{yy}"
@@ -166,9 +166,9 @@ async def getplan2(user_id):
     await check_negetive_credits(user_id)
     get_user_info = await getuserinfo(user_id)
     if get_user_info["status"] == "FREE":
-        usersdb.update_one({"id": user_id}, {"$set": {"status": "PREMIUM"}})
+        usersdb.update_one({"id": user_id}, {"$set": {"status": "ELITE"}})
 
-    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Silver Plan 15$ ∞"}})
+    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Silver Plan $20 ∞"}})
     getvalidity  = str(date.today() + timedelta(days=15)).split("-")
     yy , mm , dd = getvalidity[0], getvalidity[1], getvalidity[2]
     validity     = f"{dd}-{mm}-{yy}"
@@ -179,9 +179,9 @@ async def getplan3(user_id):
     await check_negetive_credits(user_id)
     get_user_info = await getuserinfo(user_id)
     if get_user_info["status"] == "FREE":
-        usersdb.update_one({"id": user_id}, {"$set": {"status": "PREMIUM"}})
+        usersdb.update_one({"id": user_id}, {"$set": {"status": "ELITE"}})
 
-    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Gold Plan 25$ ∞"}})
+    usersdb.update_one({"id": user_id}, {"$set": {"plan": "Gold Plan $35 ∞"}})
     getvalidity  = str(date.today() + timedelta(days=30)).split("-")
     yy , mm , dd = getvalidity[0], getvalidity[1], getvalidity[2]
     validity     = f"{dd}-{mm}-{yy}"
@@ -192,10 +192,10 @@ async def get_lifetime_plan(user_id):
     await check_negetive_credits(user_id)
     get_user_info = await getuserinfo(user_id)
     if get_user_info["status"] == "FREE":
-        usersdb.update_one({"id": user_id}, {"$set": {"status": "LIFETIME"}})
+        usersdb.update_one({"id": user_id}, {"$set": {"status": "ETERNAL"}})
 
     usersdb.update_one({"id": user_id}, {
-                       "$set": {"plan": "Lifetime 35$ ∞"}})
+                       "$set": {"plan": "Lifetime $∞"}})
     
 
 
@@ -235,7 +235,7 @@ async def plan_expirychk(user_id):
             resp = f"""<b>
 Plan Expired ⚠️
 
-Message: Your Current Plan is Expired . To Regain Access Purchase Again Our One Of Plan .
+Message: Your Current Plan Has Expired . To Purchase Again The Plan .
 
 Type /buy To Purchase Plan
 </b>"""
