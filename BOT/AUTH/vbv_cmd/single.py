@@ -19,11 +19,12 @@ async def stripe_auth_cmd(Client, message):
         approve = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
 
         checkall = await check_all_thing(Client, message)
-        if not checkall[0]:
+        if checkall[0] == False:
             return
 
+        role = checkall[1]
         getcc = await getmessage(message)
-        if not getcc:
+        if getcc == False:
             resp = f"""<b>
 Gate Name: {gateway} ♻️
 CMD: /vbv
@@ -34,54 +35,61 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
             await message.reply_text(resp, message.id)
             return
 
-        cc, mes, ano, cvv = getcc
+        cc, mes, ano, cvv = getcc[0], getcc[1], getcc[2], getcc[3]
         fullcc = f"{cc}|{mes}|{ano}|{cvv}"
         bin = cc[:6]
 
         if bin.startswith('3'):
-            await message.reply_text("<b>Unsupported card type.</b>", message.id)
+            unsupport_resp = f"""<b>
+Unsupported card type.</b>"""
+            await message.reply_text(unsupport_resp, message.id)
             return
+        
 
-        processing_msg = f"""<b>╔═══════════════════╗
+        processing_msg = f"""╔═══════════════════╗
      ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
 ╚═══════════════════╝
 
-🃏 𝗖𝗖 - {fullcc}
+🃏 𝗖𝗖 - { full cc }
 🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  3DS Look Up 
 ⚡ 𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 - ■■■□ 70%
 
-🔑 𝗥𝗲𝗾: {mention_user}</b>"""
-
-        processing_reply = await message.reply_text(processing_msg, message.id, disable_web_page_preview=True)
-
+🔑 𝗥𝗲𝗾: {mention_user}"""
+        
+        processing_reply = await message.reply_text(processing_msg, message.id)
+        
         # Check vbvbin.txt file
         with open("FILES/vbvbin.txt", "r", encoding="utf-8") as file:
             vbv_data = file.readlines()
 
         bin_found = False
-        bin_response, response_message = "Not Found", "Lookup Card Error"
-
         for line in vbv_data:
             if line.startswith(bin):
                 bin_found = True
-                parts = line.strip().split('|')
-                if len(parts) >= 3:
-                    bin_response, response_message = parts[1], parts[2]
+                bin_response = line.strip().split('|')[1]
+                response_message = line.strip().split('|')[2]
                 if "3D TRUE ❌" in bin_response:
                     approve = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
                 break
 
         if not bin_found:
             approve = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
-
+            bin_response = "Not Found"
+            response_message = "Lookup Card Error"
+        
         start = time.perf_counter()
+        session = httpx.AsyncClient(timeout=100)
+        getbin = await get_bin_details(cc)
+        await session.aclose()
 
-        async with httpx.AsyncClient(timeout=100) as session:
-            getbin = await get_bin_details(cc)
+        brand = getbin[0]
+        type = getbin[1]
+        level = getbin[2]
+        bank = getbin[3]
+        country = getbin[4]
+        flag = getbin[5]
 
-        brand, type, level, bank, country, flag = getbin
-
-        finalresp = f"""<b>
+        finalresp = f"""
 {approve}
         
 𝗖𝗮𝗿𝗱 ⇾ <code>{fullcc}</code>
@@ -92,9 +100,9 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
 𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
 𝐂𝐨𝐮𝗻𝘁𝗿𝐲 ⇾ {country} {flag}
 
-𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀</b>"""
-
-        await processing_reply.edit(finalresp, disable_web_page_preview=True)
+𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
+"""
+        await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
         await setantispamtime(user_id)
         await deductcredit(user_id)
 
