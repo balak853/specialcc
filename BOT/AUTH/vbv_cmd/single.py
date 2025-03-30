@@ -52,10 +52,36 @@ Usage: /vbv cc|mes|ano|cvv
 
 🃏 𝗖𝗖 - <code>{fullcc}</code>
 🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□ 70%
+⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□ 30%
 
 🔑 𝗥𝗲𝗾: Processing...
 """, message.id)
+        
+        await asyncio.sleep(1)
+        await Client.edit_message_text(message.chat.id, checking_msg.id, f"""
+╔═══════════════════╗
+     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
+╚═══════════════════╝
+
+🃏 𝗖𝗖 - <code>{fullcc}</code>
+🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
+⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□ 70%
+
+🔑 𝗥𝗲𝗾: Processing...
+""")
+        
+        await asyncio.sleep(1)
+        await Client.edit_message_text(message.chat.id, checking_msg.id, f"""
+╔═══════════════════╗
+     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
+╚═══════════════════╝
+
+🃏 𝗖𝗖 - <code>{fullcc}</code>
+🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
+⚡ 𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 - ■■■■ 99%
+
+🔑 𝗥𝗲𝗾: Processing...
+""")
 
         # Check vbvbin.txt file more efficiently
         bin_found, bin_response, response_message = False, "Not Found", "Lookup Card Error"
@@ -89,7 +115,7 @@ Usage: /vbv cc|mes|ano|cvv
 
 🃏 𝗖𝗖 - <code>{fullcc}</code>
 🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - {response_message}
+⚡ 𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 - {response_message}
 
 🔑 𝗜𝗻𝗳𝗼 - {brand} - {type} - {level}
 🏦 𝐈𝐬𝐬𝐮𝐞𝐫 - {bank}
