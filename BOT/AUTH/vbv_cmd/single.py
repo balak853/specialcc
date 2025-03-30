@@ -15,70 +15,44 @@ async def stripe_auth_cmd(Client, message):
         approve = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
 
         checkall = await check_all_thing(Client, message)
-        if checkall[0] == False:
+        if not checkall[0]:
             return
 
         role = checkall[1]
         getcc = await getmessage(message)
-        if getcc == False:
-            resp = f"""
-╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
+        if not getcc:
+            resp = f"""<b>
+Gate Name: {gateway} ♻️
+CMD: /vbv
 
 Message: No CC Found in your input ❌
 
-Usage: /vbv cc|mes|ano|cvv"""
+Usage: /vbv cc|mes|ano|cvv</b>"""
             await message.reply_text(resp, message.id)
             return
 
-        cc, mes, ano, cvv = getcc[0], getcc[1], getcc[2], getcc[3]
+        cc, mes, ano, cvv = getcc
         fullcc = f"{cc}|{mes}|{ano}|{cvv}"
         bin = cc[:6]
 
         if bin.startswith('3'):
-            unsupport_resp = """
-╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
-
-Unsupported card type."""
-            await message.reply_text(unsupport_resp, message.id)
+            await message.reply_text("<b>Unsupported card type.</b>", message.id)
             return
         
-        checking_msg = await message.reply_text(f"""
+        processing_reply = await message.reply_text("""
 ╔═══════════════════╗
      ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
 ╚═══════════════════╝
 
-🃏 𝗖𝗖 - <code>{fullcc}</code>
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 - ■□□□ 30%
+🃏 𝗖𝗖 - Processing...
+🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  3DS Look Up
+⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□ 30%
 """, message.id)
-        
-        await asyncio.sleep(0.5)
-        await Client.edit_message_text(message.chat.id, checking_msg.id, f"""
-╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
+        await asyncio.sleep(1)
+        await Client.edit_message_text(message.chat.id, processing_reply.id, processing_reply.text.replace("30%", "70%"))
+        await asyncio.sleep(1)
+        await Client.edit_message_text(message.chat.id, processing_reply.id, processing_reply.text.replace("70%", "99%"))
 
-🃏 𝗖𝗖 - <code>{fullcc}</code>
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝘀𝗽𝗼𝗻𝘀𝗲 - ■■■□ 70%
-""")
-        
-        await asyncio.sleep(0.5)
-        await Client.edit_message_text(message.chat.id, checking_msg.id, f"""
-╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
-
-🃏 𝗖𝗖 - <code>{fullcc}</code>
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝘀𝗽𝗼𝗻𝘀𝗲 - ■■■■ 99%
-""")
-        
-        # Check vbvbin.txt file
         with open("FILES/vbvbin.txt", "r", encoding="utf-8") as file:
             vbv_data = file.readlines()
 
@@ -102,30 +76,26 @@ Unsupported card type."""
         getbin = await get_bin_details(cc)
         await session.aclose()
 
-        if not getbin:
-            getbin = ["Unknown", "Unknown", "Unknown", "Unknown", "Unknown", "🏳"]
-
-        brand, type, level, bank, country, flag = getbin
+        brand, type, level, bank, country, flag = getbin if getbin else ("Unknown", "Unknown", "Unknown", "Unknown", "Unknown", "")
 
         finalresp = f"""
 {approve}
+        
+𝗖𝗮𝗿𝗱 ⇾ <code>{fullcc}</code>
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ⇾ {gateway}
+𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ⇾ {response_message}
 
-🃏 𝗖𝗖 - <code>{fullcc}</code>
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 - {gateway}
-⚡ 𝐑𝐞𝘀𝗽𝗼𝗻𝘀𝗲 - {response_message}
+𝗜𝗻𝗳𝗼 ⇾ {brand} - {type} - {level}
+𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {flag}
 
-🔑 𝗜𝗻𝗳𝗼 - {brand} - {type} - {level}
-🏦 𝐈𝐬𝐬𝐮𝐞𝐫 - {bank}
-🌍 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 - {country} {flag}
+𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
 
-⏳ 𝗧𝗶𝗺𝗲 - {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
+<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
+<b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
 
-👤 𝗥𝗲𝗾 𝗯𝘆: <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
-👑 𝗢𝘄𝗻𝗲𝗿: <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
 """
-        await Client.edit_message_text(message.chat.id, checking_msg.id, finalresp)
-        print("Final response sent")
-
+        await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
         await setantispamtime(user_id)
         await deductcredit(user_id)
 
