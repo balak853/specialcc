@@ -7,6 +7,7 @@ from FUNC.defs import *
 from TOOLS.check_all_func import *
 from TOOLS.getbin import *
 
+
 @Client.on_message(filters.command("vbv", [".", "/"]))
 async def stripe_auth_cmd(Client, message):
     try:
@@ -15,12 +16,12 @@ async def stripe_auth_cmd(Client, message):
         approve = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
 
         checkall = await check_all_thing(Client, message)
-        if not checkall[0]:
+        if checkall[0] == False:
             return
 
         role = checkall[1]
         getcc = await getmessage(message)
-        if not getcc:
+        if getcc == False:
             resp = f"""<b>
 Gate Name: {gateway} ♻️
 CMD: /vbv
@@ -31,28 +32,21 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
             await message.reply_text(resp, message.id)
             return
 
-        cc, mes, ano, cvv = getcc
+        cc, mes, ano, cvv = getcc[0], getcc[1], getcc[2], getcc[3]
         fullcc = f"{cc}|{mes}|{ano}|{cvv}"
         bin = cc[:6]
 
         if bin.startswith('3'):
-            await message.reply_text("<b>Unsupported card type.</b>", message.id)
+            unsupport_resp = f"""<b>
+Unsupported card type."""
+            await message.reply_text(unsupport_resp, message.id)
             return
         
-        processing_reply = await message.reply_text("""
-╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
 
-🃏 𝗖𝗖 - Processing...
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  3DS Look Up
-⚡ 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□ 30%
-""", message.id)
-        await asyncio.sleep(1)
-        await Client.edit_message_text(message.chat.id, processing_reply.id, processing_reply.text.replace("30%", "70%"))
-        await asyncio.sleep(1)
-        await Client.edit_message_text(message.chat.id, processing_reply.id, processing_reply.text.replace("70%", "99%"))
-
+        processing_msg = "Processing your request..."
+        processing_reply = await message.reply_text(processing_msg, message.id)
+        
+        # Check vbvbin.txt file
         with open("FILES/vbvbin.txt", "r", encoding="utf-8") as file:
             vbv_data = file.readlines()
 
@@ -76,7 +70,12 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
         getbin = await get_bin_details(cc)
         await session.aclose()
 
-        brand, type, level, bank, country, flag = getbin if getbin else ("Unknown", "Unknown", "Unknown", "Unknown", "Unknown", "")
+        brand = getbin[0]
+        type = getbin[1]
+        level = getbin[2]
+        bank = getbin[3]
+        country = getbin[4]
+        flag = getbin[5]
 
         finalresp = f"""
 {approve}
@@ -90,10 +89,6 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ⇾ {country} {flag}
 
 𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
-
-<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
-<b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
-
 """
         await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
         await setantispamtime(user_id)
