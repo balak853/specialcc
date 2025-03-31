@@ -11,12 +11,12 @@ from .gate import *
 
 
 @Client.on_message(filters.command("chk", [".", "/"]))
-async def stripe_auth_cmd(Client, message):
+async def pp_auth_cmd(Client, message):
     try:
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway="sitebase [1$]"
+        gateway = "Stripe Auth"
 
         if checkall[0] == False:
             return
@@ -26,11 +26,11 @@ async def stripe_auth_cmd(Client, message):
         if getcc == False:
             resp = f"""<b>
 Gate Name: {gateway} ♻️
-CMD: /chk
+CMD: /b3
 
 Message: No CC Found in your input ❌
 
-Usage: /chk cc|mes|ano|cvv</b>"""
+Usage: /b3 cc|mes|ano|cvv</b>"""
             await message.reply_text(resp, message.id)
             return
 
@@ -61,26 +61,12 @@ Usage: /chk cc|mes|ano|cvv</b>"""
         start = time.perf_counter()
         proxies = await get_proxy_format()
         session = httpx.AsyncClient(
-            timeout=30, proxies=proxies, follow_redirects=True)
-        sks = await getallsk()
+            timeout=30, follow_redirects=True)
         result = await create_cvv_charge(fullcc, session)
         getbin = await get_bin_details(cc)
         getresp = await get_charge_resp(result, user_id, fullcc)
         status = getresp["status"]
         response = getresp["response"]
-
-        # bearer_token = await get_token("VBV_TOKEN")
-        # vbv_check       = await vbvcheck(fullcc , bearer_token , session)
-        # vbv_status   = vbv_check[0]
-
-        # if vbv_status == "VBV Required ❌":
-        #     vbv ="failed"
-
-        # elif vbv_status == "VBV Passed ✅":
-        #     vbv ="passed"
-        # else:
-        #     pass
-
 
         thirdresp = f"""
 ↯ Checking...
@@ -112,6 +98,9 @@ Usage: /chk cc|mes|ano|cvv</b>"""
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
 
 𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+
+𝗥𝗲𝗾 𝗯𝘆:- <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a>
+𝗗𝗲𝘃 𝗯𝘆:- <a href="tg://user?id=7297683223">Goku</a>
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
