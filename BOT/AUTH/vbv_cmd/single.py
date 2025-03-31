@@ -12,11 +12,8 @@ from TOOLS.getbin import *
 async def stripe_auth_cmd(Client, message):
     try:
         user_id = message.from_user.id
-        first_name = message.from_user.first_name
-        mention_user = f'<a href="tg://user?id={user_id}">{first_name}</a>'
-
         gateway = "3DS Lookup"
-        approve = "𝗣𝗮𝘀𝘀𝗲𝗱 ✅"
+        approve = "PASSED"
 
         checkall = await check_all_thing(Client, message)
         if checkall[0] == False:
@@ -25,13 +22,16 @@ async def stripe_auth_cmd(Client, message):
         role = checkall[1]
         getcc = await getmessage(message)
         if getcc == False:
-            resp = f"""<b>
-Gate Name: {gateway} ♻️
-CMD: /vbv
+            resp = f"""
+<b>VBV CHECKER</b>
+━━━━━━━━━━━━━━━━
+<b>Gate Name:</b> {gateway}
+<b>CMD:</b> /vbv
 
-Message: No CC Found in your input ❌
+<b>No CC Found in your input!</b>
 
-Usage: /vbv cc|mes|ano|cvv</b>"""
+<b>Usage:</b> /vbv cc|mes|ano|cvv
+━━━━━━━━━━━━━━━━"""
             await message.reply_text(resp, message.id)
             return
 
@@ -40,25 +40,12 @@ Usage: /vbv cc|mes|ano|cvv</b>"""
         bin = cc[:6]
 
         if bin.startswith('3'):
-            unsupport_resp = f"""<b>
-Unsupported card type.</b>"""
-            await message.reply_text(unsupport_resp, message.id)
+            await message.reply_text("Unsupported card type.", message.id)
             return
         
-
-        processing_msg = f"""╔═══════════════════╗
-     ↯ 𝗖𝗵𝗲𝗰𝗸𝗶𝗻𝗴...
-╚═══════════════════╝
-
-🃏 𝗖𝗖 - { full cc }
-🌐 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  3DS Look Up 
-⚡ 𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 - ■■■□ 70%
-
-🔑 𝗥𝗲𝗾: {mention_user}"""
-        
+        processing_msg = "Processing your request..."
         processing_reply = await message.reply_text(processing_msg, message.id)
         
-        # Check vbvbin.txt file
         with open("FILES/vbvbin.txt", "r", encoding="utf-8") as file:
             vbv_data = file.readlines()
 
@@ -68,12 +55,12 @@ Unsupported card type.</b>"""
                 bin_found = True
                 bin_response = line.strip().split('|')[1]
                 response_message = line.strip().split('|')[2]
-                if "3D TRUE ❌" in bin_response:
-                    approve = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
+                if "3D TRUE" in bin_response:
+                    approve = "REJECTED"
                 break
 
         if not bin_found:
-            approve = "𝗥𝗲𝗷𝗲𝗰𝘁𝗲𝗱 ❌"
+            approve = "REJECTED"
             bin_response = "Not Found"
             response_message = "Lookup Card Error"
         
@@ -82,26 +69,23 @@ Unsupported card type.</b>"""
         getbin = await get_bin_details(cc)
         await session.aclose()
 
-        brand = getbin[0]
-        type = getbin[1]
-        level = getbin[2]
-        bank = getbin[3]
-        country = getbin[4]
-        flag = getbin[5]
+        brand, type, level, bank, country, flag = getbin
 
         finalresp = f"""
-{approve}
-        
-𝗖𝗮𝗿𝗱 ⇾ <code>{fullcc}</code>
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ⇾ {gateway}
-𝐑𝐞𝐬𝗽𝗼𝗻𝘀𝗲 ⇾ {response_message}
+<b>VBV CHECK RESULT</b>
+━━━━━━━━━━━━━━━━
+<b>Status:</b> {approve}
 
-𝗜𝗻𝗳𝗼 ⇾ {brand} - {type} - {level}
-𝐈𝐬𝐬𝐮𝐞𝐫 ⇾ {bank}
-𝐂𝐨𝐮𝗻𝘁𝗿𝐲 ⇾ {country} {flag}
+<b>Card:</b> <code>{fullcc}</code>
+<b>Gateway:</b> {gateway}
+<b>Response:</b> {response_message}
 
-𝗧𝗶𝗺𝗲 ⇾ {time.perf_counter() - start:0.2f} 𝘀𝗲𝗰𝗼𝗻𝗱𝘀
-"""
+<b>Info:</b> {brand} - {type} - {level}
+<b>Issuer:</b> {bank}
+<b>Country:</b> {country}
+
+<b>Time:</b> {time.perf_counter() - start:0.2f} sec
+━━━━━━━━━━━━━━━━"""
         await Client.edit_message_text(message.chat.id, processing_reply.id, finalresp)
         await setantispamtime(user_id)
         await deductcredit(user_id)
