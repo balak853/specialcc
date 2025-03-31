@@ -9,7 +9,7 @@ from TOOLS.getbin import *
 from .response import *
 from .gate import *
 
-@Client.on_message(filters.command("au", [".", "/"]))
+@Client.on_message(filters.command("b3", [".", "/"]))
 async def pp_auth_cmd(Client, message):
     try:
         user_id = str(message.from_user.id)
