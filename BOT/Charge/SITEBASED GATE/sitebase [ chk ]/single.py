@@ -16,7 +16,7 @@ async def pp_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway = "Stripe Auth"
+        gateway = "sitebase [1$]"
 
         if checkall[0] == False:
             return
