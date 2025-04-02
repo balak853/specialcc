@@ -8,7 +8,7 @@ async def singlebinget(message):
     try:
         parts = message.text.split()
         if len(parts) >= 2:
-            return parts[1], None, None, None
+            return parts[1]
         else:
             return False
     except:
@@ -27,10 +27,11 @@ def get_bin_info_from_csv(fbin, csv_file='FILES/bins_all.csv'):
                         "brand": row[3],
                         "type": row[4],
                         "level": row[5],
-                        "bank": row[6]
+                        "bank": row[6],
+                        "currency": row[7] if len(row) > 7 else "N/A"
                     }
     except Exception as e:
-        print(f"𝐄𝐫𝐫𝐨𝐫 𝐫𝐞𝐚𝐝𝐢𝐧𝐠 𝐂𝐒𝐕: {e}")
+        print(f"Error reading CSV: {e}")
     return {}
 
 def get_country_name(code, fallback_country_name):
@@ -45,13 +46,13 @@ def get_country_name(code, fallback_country_name):
 async def cmd_bin(client, message):
     try:
         checkall = await check_all_thing(client, message)
-        if checkall[0] == False:
+        if not checkall[0]:
             return
 
-        bin = await singlebinget(message)
-        if bin == False:
-            bin = await getmessage(message)
-            if bin == False:
+        bin_number = await singlebinget(message)
+        if not bin_number:
+            bin_number = await getmessage(message)
+            if not bin_number:
                 resp = """
 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐁𝐈𝐍 ⚠️
 
@@ -60,7 +61,7 @@ async def cmd_bin(client, message):
                 await message.reply_text(resp, quote=True)
                 return
 
-        fbin = bin[0][:6]
+        fbin = bin_number[:6]
         bin_info = get_bin_info_from_csv(fbin)
 
         if not bin_info:
@@ -77,70 +78,22 @@ async def cmd_bin(client, message):
         level = bin_info.get("level", "N/A").upper()
         bank = bin_info.get("bank", "N/A").upper()
         country_code = bin_info.get("country", "N/A").upper()
-        flag = bin_info.get("flag", "N/A").upper()
+        flag = bin_info.get("flag", "")
+        currency = bin_info.get("currency", "N/A").upper()
         country_full_name = get_country_name(country_code, country_code)
 
         resp = f"""
-𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁 🔍
-
-𝗕𝗜𝗡: <code>{fbin}</code>
-𝗜𝗻𝗳𝗼: <code>{brand} - {card_type} - {level}</code>
-𝐁𝐚𝐧𝐤: <code>{bank} 🏛</code>
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲: <code>{country_full_name} {flag}</code>
+𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩 𝐑𝐞𝐬𝐮𝐥𝐭 🔍
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝐁𝐢𝐧 ➜ <code>{fbin}</code> 
+𝗜𝗻𝗳𝗼 ➜ <code>{brand}-{card_type}-{level}</code> 
+𝗜𝘀𝘀𝘂𝗲𝗿 ➜ <code>{bank} 🏛</code> 
+𝗖𝗼𝘂𝗻𝘁𝗿𝘆 ➜ <code>{country_full_name} {flag}</code> 
+𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 ➜ <code>{currency}</code>
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
 """
         await message.reply_text(resp, quote=True)
 
     except Exception:
         import traceback
         await error_log(traceback.format_exc())
-        
-@Client.on_message(filters.command("mbin", [".", "/"]))
-async def cmd_mbin(client, message):
-    try:
-        # Preliminary checks
-        checkall = await check_all_thing(client, message)
-        if checkall[0] == False:
-            return
-
-        # Extract BINs from the message
-        bins = message.text.split()[1:]
-        if not bins:
-            await message.reply_text("𝐏𝐥𝐞𝐚𝐬𝐞 𝐩𝐫𝐨𝐯𝐢𝐝𝐞 𝐁𝐈𝐍𝐬 𝐭𝐨 𝐜𝐡𝐞𝐜𝐤.", quote=True)
-            return
-
-        # Limit the number of BINs to 25
-        if len(bins) > 25:
-            await message.reply_text("𝐘𝐨𝐮 𝐜𝐚𝐧 𝐜𝐡𝐞𝐜𝐤 𝐚 𝐦𝐚𝐱𝐢𝐦𝐮𝐦 𝐨𝐟 𝟐𝟓 𝐁𝐈𝐍𝐬 𝐚𝐭 𝐚 𝐭𝐢𝐦𝐞.", quote=True)
-            return
-
-        response = "𝗠𝘂𝗹𝘁𝗶 𝗕𝗜𝗡 𝗟𝗼𝗼𝗸𝘂𝗽 𝗥𝗲𝘀𝘂𝗹𝘁𝘀 🔍\n\n"
-
-        for bin in bins:
-            fbin = bin[:6]
-            bin_info = get_bin_info_from_csv(fbin)
-
-            if not bin_info:
-                response += f"𝗕𝗜𝗡: <code>{fbin}</code> - 𝐍𝐨 𝐃𝐚𝐭𝐚 𝐅𝐨𝐮𝐧𝐝 ⚠️\n"
-                continue
-
-            brand = bin_info.get("brand", "N/A").upper()
-            card_type = bin_info.get("type", "N/A").upper()
-            level = bin_info.get("level", "N/A").upper()
-            bank = bin_info.get("bank", "N/A").upper()
-            country_code = bin_info.get("country", "N/A").upper()
-            flag = bin_info.get("flag", "N/A").upper()
-            country_full_name = get_country_name(country_code, country_code)
-
-            response += f"""
-𝗕𝗜𝗡: <code>{fbin}</code>
-𝗜𝗻𝗳𝗼: <code>{brand} - {card_type} - {level}</code>
-𝐁𝐚𝐧𝐤: <code>{bank} 🏛</code>
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲: <code>{country_full_name} {flag}</code>
-\n"""
-
-        await message.reply_text(response.strip(), quote=True)
-
-    except Exception:
-        import traceback
-        await error_log(traceback.format_exc())
-
