@@ -91,6 +91,7 @@ async def cmd_bin(client, message):
 𝗖𝗼𝘂𝗻𝘁𝗿𝘆 ➜ <code>{country_full_name} {flag}</code> 
 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 ➜ <code>{currency}</code>
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+<b>𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➜-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
 """
         await message.reply_text(resp, quote=True)
 
