@@ -48,16 +48,22 @@ async def cmd_bin(client, message):
             return
 
         bin_number = await singlebinget(message)
+
+        # Agar user kisi message ko reply kar raha hai to reply message se bin extract karein
+        if not bin_number and message.reply_to_message:
+            bin_number = message.reply_to_message.text.strip().split()[0]
+
         if not bin_number:
             bin_number = await getmessage(message)
-            if not bin_number:
-                resp = """
+
+        if not bin_number or len(bin_number) < 6:
+            resp = """
 𝐈𝐧𝐯𝐚𝐥𝐢𝐝 𝐁𝐈𝐍 ⚠️
 
 𝐌𝐞𝐬𝐬𝐚𝐠𝐞: 𝐍𝐨 𝐕𝐚𝐥𝐢𝐝 𝐁𝐈𝐍 𝐰𝐚𝐬 𝐟𝐨𝐮𝐧𝐝 𝐢𝐧 𝐲𝐨𝐮𝐫 𝐢𝐧𝐩𝐮𝐭.
 """
-                await message.reply_text(resp, quote=True)
-                return
+            await message.reply_text(resp, quote=True)
+            return
 
         fbin = bin_number[:6]
         bin_info = get_bin_info_from_csv(fbin)
