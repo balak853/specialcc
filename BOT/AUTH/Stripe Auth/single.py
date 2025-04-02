@@ -108,7 +108,7 @@ async def pp_auth_cmd(Client, message):
 ━━━━━━━━━━━━━━━
 <b>Time Taken:</b> {time.perf_counter() - start:0.2f} seconds  
 ━━━━━━━━━━━━━━━
-<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ✦𓆩⤿ {role} ⤾𓆪✦
+<b>𝗥𝗲𝗾 𝗯𝘆:-</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
 <b>𝗢𝘄𝗻𝗲𝗿:-</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>  
 ━━━━━━━━━━━━━━━</b>"""
         await asyncio.sleep(0.5)
