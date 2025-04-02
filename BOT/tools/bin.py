@@ -3,6 +3,7 @@ import pycountry
 from pyrogram import Client, filters
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
+import re  # Regex for extracting first 6 digits
 
 async def singlebinget(message):
     try:
@@ -49,9 +50,12 @@ async def cmd_bin(client, message):
 
         bin_number = await singlebinget(message)
 
-        # Agar user kisi message ko reply kar raha hai to reply message se bin extract karein
+        # Agar user reply message me command use kare toh reply message se BIN extract kare
         if not bin_number and message.reply_to_message:
-            bin_number = message.reply_to_message.text.strip().split()[0]
+            reply_text = message.reply_to_message.text.strip()
+            match = re.search(r'\d{6,}', reply_text)  # Extract first 6+ digit number
+            if match:
+                bin_number = match.group()[:6]  # Take first 6 digits only
 
         if not bin_number:
             bin_number = await getmessage(message)
