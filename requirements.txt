@@ -4,7 +4,7 @@ stripe
 pymongo
 bs4
 pyromod
-httpx
+httpx==0.27.0
 fake_useragent
 speedtest-cli
 psutil
