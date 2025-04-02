@@ -7,16 +7,14 @@ from TOOLS.check_all_func import *
 async def singlebinget(message):
     try:
         parts = message.text.split()
-        if len(parts) >= 2:
-            return parts[1]
-        else:
-            return False
-    except:
+        return parts[1] if len(parts) >= 2 else False
+    except Exception as e:
+        print(f"Error in singlebinget: {e}")
         return False
 
 def get_bin_info_from_csv(fbin, csv_file='FILES/bins_all.csv'):
     try:
-        with open(csv_file, mode='r', encoding='utf-8') as file:
+        with open(csv_file, mode='r', encoding='utf-8-sig') as file:
             reader = csv.reader(file)
             for row in reader:
                 if row[0] == fbin:
@@ -82,6 +80,9 @@ async def cmd_bin(client, message):
         currency = bin_info.get("currency", "N/A").upper()
         country_full_name = get_country_name(country_code, country_code)
 
+        # Define 'role' properly
+        role = "User"  # Modify this based on your logic
+
         resp = f"""
 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩 𝐑𝐞𝐬𝐮𝐥𝐭 🔍
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
@@ -92,9 +93,9 @@ async def cmd_bin(client, message):
 𝗖𝘂𝗿𝗿𝗲𝗻𝗰𝘆 ➜ <code>{currency}</code>
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ 
 <b>𝗖𝗵𝗲𝗰𝗸𝗲𝗱 𝗕𝘆 ➜</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
-━━━━━━━━━━━━━━━</b>"""
+━━━━━━━━━━━━━━━"""
         await message.reply_text(resp, quote=True)
 
-    except Exception:
+    except Exception as e:
         import traceback
         await error_log(traceback.format_exc())
