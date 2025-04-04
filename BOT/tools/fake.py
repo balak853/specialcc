@@ -7,30 +7,56 @@ from TOOLS.check_all_func import *
 
 FAKE_APIS = {
     "randomuser": "https://randomuser.me/api/?nat=",
-    "namefake": "https://api.namefake.com/",
+    "namefake": "https://api.namefake.com/"
 }
 
 # Country-Specific Fake Data Enhancements
-CUSTOM_FAKE_DATA = {
-    "in": {
+COUNTRY_DATA = {
+    "in": {  # 🇮🇳 India
         "names": ["Amit Kumar", "Priya Sharma", "Rajesh Verma", "Suman Gupta", "Ravi Mehta", "Neha Joshi"],
         "streets": ["Bhavani Peth", "Lajpat Nagar", "Rajendra Place", "Sarojini Market", "Bandra West"],
         "cities": ["Mumbai", "Delhi", "Kolkata", "Chennai", "Bangalore", "Hyderabad"],
         "states": ["Maharashtra", "Delhi", "West Bengal", "Tamil Nadu", "Karnataka", "Telangana"],
         "phone_prefix": "+91",
+        "country": "India"
     },
-    "us": {
+    "us": {  # 🇺🇸 USA
         "names": ["John Smith", "Emily Johnson", "Michael Brown", "Sarah Wilson", "David Jones"],
         "streets": ["Broadway", "Fifth Avenue", "Sunset Boulevard", "Maple Street"],
         "cities": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
         "states": ["New York", "California", "Illinois", "Texas", "Arizona"],
         "phone_prefix": "+1",
+        "country": "United States"
     },
+    "uk": {  # 🇬🇧 United Kingdom
+        "names": ["Oliver Smith", "Amelia Jones", "Harry Brown", "Sophia Wilson", "Jack Taylor"],
+        "streets": ["Baker Street", "Oxford Street", "King’s Road", "Piccadilly"],
+        "cities": ["London", "Manchester", "Birmingham", "Glasgow", "Liverpool"],
+        "states": ["England", "Scotland", "Wales", "Northern Ireland"],
+        "phone_prefix": "+44",
+        "country": "United Kingdom"
+    },
+    "ca": {  # 🇨🇦 Canada
+        "names": ["Liam Martin", "Charlotte Anderson", "Noah Thomas", "Ava White", "Mason Harris"],
+        "streets": ["Bay Street", "Queen Street", "Robson Street", "Yonge Street"],
+        "cities": ["Toronto", "Vancouver", "Montreal", "Calgary", "Ottawa"],
+        "states": ["Ontario", "British Columbia", "Quebec", "Alberta", "Manitoba"],
+        "phone_prefix": "+1",
+        "country": "Canada"
+    },
+    "default": {  # Default if country code not found
+        "names": ["Alex Doe", "Chris Johnson", "Jordan Lee", "Taylor White"],
+        "streets": ["Elm Street", "Main Street", "Cedar Avenue", "Pine Road"],
+        "cities": ["Springfield", "Riverside", "Greenwood", "Fairview"],
+        "states": ["State A", "State B", "State C"],
+        "phone_prefix": "+99",
+        "country": "Unknown"
+    }
 }
 
-async def fetch_fake_data_from_api(country_code):
+async def fetch_fake_data(country_code):
     country_code = country_code.lower()
-    country_data = CUSTOM_FAKE_DATA.get(country_code, {})
+    country_data = COUNTRY_DATA.get(country_code, COUNTRY_DATA["default"])
 
     async def fetch(api_url):
         try:
@@ -53,7 +79,7 @@ async def fetch_fake_data_from_api(country_code):
             if parsed_data:
                 return parsed_data
 
-    return generate_fallback_fake_data(country_code)
+    return generate_fallback_data(country_data)
 
 def parse_fake_data(api_url, data, country_data):
     try:
@@ -67,7 +93,7 @@ def parse_fake_data(api_url, data, country_data):
                 "state": user["location"]["state"],
                 "zipcode": user["location"]["postcode"],
                 "phone": user["phone"],
-                "country": "India" if country_data else user["location"]["country"]
+                "country": country_data["country"]
             }
         elif "namefake.com" in api_url:
             return {
@@ -78,23 +104,22 @@ def parse_fake_data(api_url, data, country_data):
                 "state": data["state"],
                 "zipcode": data["zip"],
                 "phone": data["phone_h"],
-                "country": "India" if country_data else data["country"]
+                "country": country_data["country"]
             }
     except Exception:
         return None
     return None
 
-def generate_fallback_fake_data(country_code):
-    data = CUSTOM_FAKE_DATA.get(country_code, CUSTOM_FAKE_DATA["us"])  # Default to US if country not found
+def generate_fallback_data(country_data):
     return {
-        "name": random.choice(data["names"]),
+        "name": random.choice(country_data["names"]),
         "gender": random.choice(["Male", "Female"]),
-        "street": f"{random.randint(1, 9999)} {random.choice(data['streets'])}",
-        "city": random.choice(data["cities"]),
-        "state": random.choice(data["states"]),
+        "street": f"{random.randint(1, 9999)} {random.choice(country_data['streets'])}",
+        "city": random.choice(country_data["cities"]),
+        "state": random.choice(country_data["states"]),
         "zipcode": random.randint(10000, 99999),
-        "phone": f"{data['phone_prefix']} {random.randint(6000000000, 9999999999)}",
-        "country": "India" if country_code == "in" else "United States",
+        "phone": f"{country_data['phone_prefix']} {random.randint(6000000000, 9999999999)}",
+        "country": country_data["country"],
     }
 
 @Client.on_message(filters.command("fake", [".", "/"]))
@@ -108,7 +133,7 @@ async def cmd_fake(client, message):
         args = message.text.split(" ")
         country_code = args[1].lower() if len(args) > 1 else "us"
 
-        fake_data = await fetch_fake_data_from_api(country_code)
+        fake_data = await fetch_fake_data(country_code)
         if not fake_data:
             await message.reply_text("❌ Failed to fetch fake data. Try again later.")
             return
