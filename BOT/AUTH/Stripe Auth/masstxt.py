@@ -1,8 +1,9 @@
 import json
 import time
-import threading
+import traceback
 import asyncio
 import httpx
+import aiofiles
 from pyrogram import Client, filters
 from datetime import timedelta
 from FUNC.usersdb_func import *
@@ -36,24 +37,25 @@ async def mass_check(Client, message):
 
         # Check if the replied message contains a file
         if not message.reply_to_message or not message.reply_to_message.document:
-            await message.reply_text("❌ Please reply to a .txt file containing CCs!", message.id)
+            await message.reply_text("❌ Please reply to a .txt file containing CCs!", reply_to_message_id=message.id)
             return
 
         # Ensure the file is a .txt
         file_info = message.reply_to_message.document
         if not file_info.file_name.endswith(".txt"):
-            await message.reply_text("❌ Only .txt files are supported!", message.id)
+            await message.reply_text("❌ Only .txt files are supported!", reply_to_message_id=message.id)
             return
 
-        # Download and read the file
-        file_path = await Client.download_media(message.reply_to_message)
-        with open(file_path, "r", encoding="utf-8") as file:
-            ccs = file.read().strip().split("\n")
+        # Download and read the file asynchronously
+        file_path = await message.reply_to_message.download()
+        async with aiofiles.open(file_path, "r", encoding="utf-8") as file:
+            content = await file.read()
+            ccs = content.strip().split("\n")
 
         # Limit to 200 CCs
         if len(ccs) > 200:
             ccs = ccs[:200]
-            await message.reply_text("⚠️ Only the first 200 CCs will be checked!", message.id)
+            await message.reply_text("⚠️ Only the first 200 CCs will be checked!", reply_to_message_id=message.id)
 
         resp = f"""
 - 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  Stripe Auth
@@ -61,7 +63,7 @@ async def mass_check(Client, message):
 - 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - Checking CCs for {first_name}
 - 𝐒𝐭𝐚𝐭𝐮𝐬 - Processing...⌛️
         """
-        nov = await message.reply_text(resp, message.id)
+        nov = await message.reply_text(resp, reply_to_message_id=message.id)
 
         text = "<b>↯ Stripe Auth</b>\n"
         amt = 0
@@ -96,6 +98,5 @@ async def mass_check(Client, message):
         await setantispamtime(user_id)
 
     except Exception as e:
-        await error_log(str(e))
-        await message.reply_text("❌ An error occurred while processing the file.")
-
+        await error_log(traceback.format_exc())
+        await message.reply_text("❌ An error occurred while processing the file.", reply_to_message_id=message.id)
