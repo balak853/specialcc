@@ -1,76 +1,41 @@
 import httpx
 import asyncio
+import random
 from pyrogram import Client, filters
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
 
 FAKE_APIS = {
     "randomuser": "https://randomuser.me/api/?nat=",
-    "namefake": "https://api.namefake.com/"
+    "namefake": "https://api.namefake.com/",
 }
 
-# Country Code Mapping
-COUNTRY_MAP = {
-    "us": "United States",
-    "in": "India",
-    "gb": "United Kingdom",
-    "ca": "Canada",
-    "au": "Australia",
-    "de": "Germany",
-    "fr": "France",
-    "it": "Italy",
-    "es": "Spain",
-    "nl": "Netherlands",
-    "br": "Brazil",
-    "mx": "Mexico",
-    "ru": "Russia",
-    "jp": "Japan",
-    "cn": "China",
-    "kr": "South Korea",
-    "za": "South Africa",
-    "ae": "United Arab Emirates"
-}
-
-# Custom Fake Data for Some Countries
+# Country-Specific Fake Data Enhancements
 CUSTOM_FAKE_DATA = {
     "in": {
-        "names": ["Rahul Sharma", "Priya Patel", "Amit Verma", "Sneha Iyer", "Vikram Gupta"],
-        "cities": ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata"],
-        "states": ["Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "West Bengal"],
-        "streets": ["MG Road", "Lajpat Nagar", "Brigade Road", "Anna Salai", "Park Street"],
-        "phones": ["+91 9876543210", "+91 8765432109", "+91 7654321098"]
+        "names": ["Amit Kumar", "Priya Sharma", "Rajesh Verma", "Suman Gupta", "Ravi Mehta", "Neha Joshi"],
+        "streets": ["Bhavani Peth", "Lajpat Nagar", "Rajendra Place", "Sarojini Market", "Bandra West"],
+        "cities": ["Mumbai", "Delhi", "Kolkata", "Chennai", "Bangalore", "Hyderabad"],
+        "states": ["Maharashtra", "Delhi", "West Bengal", "Tamil Nadu", "Karnataka", "Telangana"],
+        "phone_prefix": "+91",
     },
     "us": {
-        "names": ["John Smith", "Emma Johnson", "Michael Brown", "Emily Davis", "Chris Wilson"],
-        "cities": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
-        "states": ["New York", "California", "Illinois", "Texas", "Florida"],
-        "streets": ["Main St", "Broadway", "Sunset Blvd", "Hollywood Blvd", "Elm Street"],
-        "phones": ["+1 202-555-0143", "+1 312-555-0178", "+1 415-555-0199"]
-    }
+        "names": ["John Smith", "Emily Johnson", "Michael Brown", "Sarah Wilson", "David Jones"],
+        "streets": ["Broadway", "Fifth Avenue", "Sunset Boulevard", "Maple Street"],
+        "cities": ["New York", "Los Angeles", "Chicago", "Houston", "Phoenix"],
+        "states": ["New York", "California", "Illinois", "Texas", "Arizona"],
+        "phone_prefix": "+1",
+    },
 }
 
 async def fetch_fake_data_from_api(country_code):
-    country_name = COUNTRY_MAP.get(country_code.lower(), country_code.upper())
+    country_code = country_code.lower()
+    country_data = CUSTOM_FAKE_DATA.get(country_code, {})
 
-    # Use predefined fake data for specific countries
-    if country_code in CUSTOM_FAKE_DATA:
-        fake = CUSTOM_FAKE_DATA[country_code]
-        return {
-            "name": random.choice(fake["names"]),
-            "gender": random.choice(["Male", "Female"]),
-            "street": f"{random.randint(100, 9999)} {random.choice(fake['streets'])}",
-            "city": random.choice(fake["cities"]),
-            "state": random.choice(fake["states"]),
-            "zipcode": str(random.randint(10000, 99999)),
-            "phone": random.choice(fake["phones"]),
-            "country": country_name
-        }
-
-    # Otherwise, fetch from APIs
     async def fetch(api_url):
         try:
             if "randomuser" in api_url:
-                api_url += country_code  # Append country code for specific data
+                api_url += country_code
             
             async with httpx.AsyncClient(headers={"User-Agent": "Mozilla/5.0"}) as client:
                 response = await client.get(api_url)
@@ -84,12 +49,13 @@ async def fetch_fake_data_from_api(country_code):
 
     for api_url, data in results:
         if data:
-            parsed_data = parse_fake_data(api_url, data, country_name)
+            parsed_data = parse_fake_data(api_url, data, country_data)
             if parsed_data:
                 return parsed_data
-    return None  # If all fail
 
-def parse_fake_data(api_url, data, country_name):
+    return generate_fallback_fake_data(country_code)
+
+def parse_fake_data(api_url, data, country_data):
     try:
         if "randomuser.me" in api_url:
             user = data["results"][0]
@@ -101,7 +67,7 @@ def parse_fake_data(api_url, data, country_name):
                 "state": user["location"]["state"],
                 "zipcode": user["location"]["postcode"],
                 "phone": user["phone"],
-                "country": country_name
+                "country": "India" if country_data else user["location"]["country"]
             }
         elif "namefake.com" in api_url:
             return {
@@ -112,11 +78,24 @@ def parse_fake_data(api_url, data, country_name):
                 "state": data["state"],
                 "zipcode": data["zip"],
                 "phone": data["phone_h"],
-                "country": country_name
+                "country": "India" if country_data else data["country"]
             }
     except Exception:
         return None
     return None
+
+def generate_fallback_fake_data(country_code):
+    data = CUSTOM_FAKE_DATA.get(country_code, CUSTOM_FAKE_DATA["us"])  # Default to US if country not found
+    return {
+        "name": random.choice(data["names"]),
+        "gender": random.choice(["Male", "Female"]),
+        "street": f"{random.randint(1, 9999)} {random.choice(data['streets'])}",
+        "city": random.choice(data["cities"]),
+        "state": random.choice(data["states"]),
+        "zipcode": random.randint(10000, 99999),
+        "phone": f"{data['phone_prefix']} {random.randint(6000000000, 9999999999)}",
+        "country": "India" if country_code == "in" else "United States",
+    }
 
 @Client.on_message(filters.command("fake", [".", "/"]))
 async def cmd_fake(client, message):
@@ -135,19 +114,18 @@ async def cmd_fake(client, message):
             return
 
         resp = f"""
-<b>Fake Info Created Successfully</b>
-✅
-───────────────
-🆔 <b>Full Name</b> ➜ {fake_data['name']}
-👤 <b>Gender</b> ➜ {fake_data['gender']}
-🏡 <b>Street</b> ➜ {fake_data['street']}
-🏙️ <b>City/Town/Village</b> ➜ {fake_data['city']}
-🌍 <b>State/Province/Region</b> ➜ {fake_data['state']}
-📮 <b>Postal Code</b> ➜ {fake_data['zipcode']}
-📞 <b>Phone Number</b> ➜ {fake_data['phone']}
-🌏 <b>Country</b> ➜ {fake_data['country']}
-───────────────
-<b>Checked By</b> ➜ <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
+<b>✅ Fake Info Created Successfully</b>
+━━━━━━━━━━━━━━━━━━━━━━
+🆔 <b>Full Name:</b> <code>{fake_data['name']}</code>
+👤 <b>Gender:</b> <code>{fake_data['gender']}</code>
+🏠 <b>Street:</b> <code>{fake_data['street']}</code>
+🏙️ <b>City/Town/Village:</b> <code>{fake_data['city']}</code>
+🌍 <b>State/Province/Region:</b> <code>{fake_data['state']}</code>
+📮 <b>Postal Code:</b> <code>{fake_data['zipcode']}</code>
+📞 <b>Phone Number:</b> <code>{fake_data['phone']}</code>
+🌏 <b>Country:</b> <code>{fake_data['country']}</code>
+━━━━━━━━━━━━━━━━━━━━━━
+<b>Checked By:</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
 """
         await message.reply_text(resp)
     except Exception as e:
