@@ -1,16 +1,15 @@
 import httpx
-import random
 import asyncio
 from pyrogram import Client, filters
-from bs4 import BeautifulSoup
 from FUNC.usersdb_func import *
 from TOOLS.check_all_func import *
 
 FAKE_APIS = {
     "randomuser": "https://randomuser.me/api/?nat=",
-    "namefake": "https://api.namefake.com/"  # optional fallback
+    "namefake": "https://api.namefake.com/"
 }
 
+# Country Code Mapping
 COUNTRY_MAP = {
     "us": "United States",
     "in": "India",
@@ -29,25 +28,50 @@ COUNTRY_MAP = {
     "cn": "China",
     "kr": "South Korea",
     "za": "South Africa",
-    "ae": "United Arab Emirates",
-    "pk": "Pakistan",
-    "bd": "Bangladesh",
-    "ph": "Philippines",
-    "id": "Indonesia"
+    "ae": "United Arab Emirates"
+}
+
+# Custom Fake Data for Some Countries
+CUSTOM_FAKE_DATA = {
+    "in": {
+        "names": ["Rahul Sharma", "Priya Patel", "Amit Verma", "Sneha Iyer", "Vikram Gupta"],
+        "cities": ["Mumbai", "Delhi", "Bangalore", "Chennai", "Kolkata"],
+        "states": ["Maharashtra", "Delhi", "Karnataka", "Tamil Nadu", "West Bengal"],
+        "streets": ["MG Road", "Lajpat Nagar", "Brigade Road", "Anna Salai", "Park Street"],
+        "phones": ["+91 9876543210", "+91 8765432109", "+91 7654321098"]
+    },
+    "us": {
+        "names": ["John Smith", "Emma Johnson", "Michael Brown", "Emily Davis", "Chris Wilson"],
+        "cities": ["New York", "Los Angeles", "Chicago", "Houston", "San Francisco"],
+        "states": ["New York", "California", "Illinois", "Texas", "Florida"],
+        "streets": ["Main St", "Broadway", "Sunset Blvd", "Hollywood Blvd", "Elm Street"],
+        "phones": ["+1 202-555-0143", "+1 312-555-0178", "+1 415-555-0199"]
+    }
 }
 
 async def fetch_fake_data_from_api(country_code):
     country_name = COUNTRY_MAP.get(country_code.lower(), country_code.upper())
 
-    # Use realistic web-scraped data for specific countries
-    if country_code.lower() in ["in", "br", "pk", "bd", "ph", "id"]:
-        return await scrape_fakename_generator(country_name)
+    # Use predefined fake data for specific countries
+    if country_code in CUSTOM_FAKE_DATA:
+        fake = CUSTOM_FAKE_DATA[country_code]
+        return {
+            "name": random.choice(fake["names"]),
+            "gender": random.choice(["Male", "Female"]),
+            "street": f"{random.randint(100, 9999)} {random.choice(fake['streets'])}",
+            "city": random.choice(fake["cities"]),
+            "state": random.choice(fake["states"]),
+            "zipcode": str(random.randint(10000, 99999)),
+            "phone": random.choice(fake["phones"]),
+            "country": country_name
+        }
 
+    # Otherwise, fetch from APIs
     async def fetch(api_url):
         try:
             if "randomuser" in api_url:
-                api_url += country_code
-
+                api_url += country_code  # Append country code for specific data
+            
             async with httpx.AsyncClient(headers={"User-Agent": "Mozilla/5.0"}) as client:
                 response = await client.get(api_url)
                 if response.status_code == 200:
@@ -63,7 +87,7 @@ async def fetch_fake_data_from_api(country_code):
             parsed_data = parse_fake_data(api_url, data, country_name)
             if parsed_data:
                 return parsed_data
-    return None
+    return None  # If all fail
 
 def parse_fake_data(api_url, data, country_name):
     try:
@@ -73,63 +97,26 @@ def parse_fake_data(api_url, data, country_name):
                 "name": f"{user['name']['first']} {user['name']['last']}",
                 "gender": user["gender"].title(),
                 "street": f"{user['location']['street']['number']} {user['location']['street']['name']}",
-                "city": user["location"].get("city", "Unknown"),
-                "state": user["location"].get("state", "Unknown"),
-                "zipcode": str(user["location"].get("postcode", "Unknown")),
-                "phone": user.get("phone", "N/A"),
+                "city": user["location"]["city"],
+                "state": user["location"]["state"],
+                "zipcode": user["location"]["postcode"],
+                "phone": user["phone"],
                 "country": country_name
             }
         elif "namefake.com" in api_url:
             return {
-                "name": data.get("name", "Unknown"),
-                "gender": data.get("gender", "Unknown").title(),
-                "street": data.get("address", "Unknown"),
-                "city": data.get("city", "Unknown"),
-                "state": data.get("state", "Unknown"),
-                "zipcode": data.get("zip", "Unknown"),
-                "phone": data.get("phone_h", "N/A"),
+                "name": data["name"],
+                "gender": data["gender"].title(),
+                "street": data["address"],
+                "city": data["city"],
+                "state": data["state"],
+                "zipcode": data["zip"],
+                "phone": data["phone_h"],
                 "country": country_name
             }
     except Exception:
         return None
     return None
-
-async def scrape_fakename_generator(country_name):
-    try:
-        async with httpx.AsyncClient() as client:
-            url_country = country_name.lower().replace(" ", "-")
-            url = f"https://www.fakenamegenerator.com/gen-random-{url_country}.php"
-            response = await client.get(url)
-            soup = BeautifulSoup(response.text, "html.parser")
-
-            name = soup.find("div", {"class": "address"}).h3.text.strip()
-            address_block = soup.find("div", {"class": "address"}).find_all("div")[0].text.strip().split("\n")
-            street = address_block[0].strip()
-            city_state_zip = address_block[1].strip().split(",")
-            city = city_state_zip[0].strip()
-            state_zip = city_state_zip[1].strip().split(" ")
-            state = " ".join(state_zip[:-1])
-            zipcode = state_zip[-1]
-
-            info_section = soup.find_all("dl")[1]
-            dt_tags = info_section.find_all("dt")
-            dd_tags = info_section.find_all("dd")
-            info = {dt.text.strip(): dd.text.strip() for dt, dd in zip(dt_tags, dd_tags)}
-            gender = info.get("Gender", "Unknown")
-            phone = info.get("Phone", "N/A")
-
-            return {
-                "name": name,
-                "gender": gender,
-                "street": street,
-                "city": city,
-                "state": state,
-                "zipcode": zipcode,
-                "phone": phone,
-                "country": country_name
-            }
-    except Exception:
-        return None
 
 @Client.on_message(filters.command("fake", [".", "/"]))
 async def cmd_fake(client, message):
@@ -148,19 +135,19 @@ async def cmd_fake(client, message):
             return
 
         resp = f"""
-<b>Fake Info Created Successfully ✅</b>
-━━━━━━━━━━━━━━
-🆔 <b>Full Name:</b> <code>{fake_data['name']}</code>
-👤 <b>Gender:</b> <code>{fake_data['gender']}</code>
-🏠 <b>Street:</b> <code>{fake_data['street']}</code>
-🏙️ <b>City/Town/Village:</b> <code>{fake_data['city']}</code>
-🌍 <b>State/Province/Region:</b> <code>{fake_data['state']}</code>
-📮 <b>Postal Code:</b> <code>{fake_data['zipcode']}</code>
-📞 <b>Phone Number:</b> <code>{fake_data['phone']}</code>
-🌏 <b>Country:</b> <code>{fake_data['country']}</code>
-━━━━━━━━━━━━━━
-<b>Checked By:</b> <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
-<b>Bot by:</b> <a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+<b>Fake Info Created Successfully</b>
+✅
+───────────────
+🆔 <b>Full Name</b> ➜ {fake_data['name']}
+👤 <b>Gender</b> ➜ {fake_data['gender']}
+🏡 <b>Street</b> ➜ {fake_data['street']}
+🏙️ <b>City/Town/Village</b> ➜ {fake_data['city']}
+🌍 <b>State/Province/Region</b> ➜ {fake_data['state']}
+📮 <b>Postal Code</b> ➜ {fake_data['zipcode']}
+📞 <b>Phone Number</b> ➜ {fake_data['phone']}
+🌏 <b>Country</b> ➜ {fake_data['country']}
+───────────────
+<b>Checked By</b> ➜ <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> [ {role} ]
 """
         await message.reply_text(resp)
     except Exception as e:
