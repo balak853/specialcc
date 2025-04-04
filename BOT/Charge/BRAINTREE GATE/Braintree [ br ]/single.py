@@ -28,9 +28,9 @@ async def pp_auth_cmd(Client, message):
 <b>NO CC FOUND</b>
 ━━━━━━━━━━━━━━━
 <b>Gate Name:</b> {gateway}  
-<b>Usage:</b> /au cc|mes|ano|cvv  
+<b>Usage:</b> /br cc|mes|ano|cvv  
 ━━━━━━━━━━━━━━━
-<b>Example:</b> <code>/au 4242424242424242|12|25|123</code>  
+<b>Example:</b> <code>/sg 4242424242424242|12|25|123</code>  
 ━━━━━━━━━━━━━━━</b>"""
             await message.reply_text(resp, message.id)
             return
