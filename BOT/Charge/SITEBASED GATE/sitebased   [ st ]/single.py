@@ -16,7 +16,7 @@ async def stripe_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway="NONSK CVV [5$]"
+        gateway="sitebase [1$]"
 
         if checkall[0] == False:
             return
@@ -62,11 +62,25 @@ Usage: /st cc|mes|ano|cvv</b>"""
         proxies = await get_proxy_format()
         session = httpx.AsyncClient(
             timeout=30, proxies=proxies, follow_redirects=True)
+        sks = await getallsk()
         result = await create_cvv_charge(fullcc, session)
-        getbin = await get_bin_details(cc, session)
+        getbin = await get_bin_details(cc)
         getresp = await get_charge_resp(result, user_id, fullcc)
         status = getresp["status"]
         response = getresp["response"]
+
+        # bearer_token = await get_token("VBV_TOKEN")
+        # vbv_check       = await vbvcheck(fullcc , bearer_token , session)
+        # vbv_status   = vbv_check[0]
+
+        # if vbv_status == "VBV Required ❌":
+        #     vbv ="failed"
+
+        # elif vbv_status == "VBV Passed ✅":
+        #     vbv ="passed"
+        # else:
+        #     pass
+
 
         thirdresp = f"""
 ↯ Checking...
@@ -87,20 +101,17 @@ Usage: /st cc|mes|ano|cvv</b>"""
         currency = getbin[6]
 
         finalresp = f"""
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
+{status}
 
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐒𝐭𝐚𝐭𝐮𝐬 - {status}
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ⤿ <i>{response}</i> ⤾
+𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲- <i>{gateway}</i>
+𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞- ⤿ <i>{response}</i> ⤾
 
-- 𝗜𝗻𝗳𝗼 - {brand} - {type} - {level}
-- 𝐁𝐚𝐧𝐤 - {bank} 🏛  
-- 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 - {country} - {flag} - {currency}
+𝗜𝗻𝗳𝗼- {brand} - {type} - {level}
+𝐁𝐚𝐧𝐤- {bank} 
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
 
-- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾
-- 𝐎𝐰𝐧𝐞𝐫 - <a href="tg://user?id=6745804180">Toͥnmͣoͫy 〔 Ɠφ 〕</a>
-
-- 𝗧𝗶𝗺𝗲 - {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
@@ -113,5 +124,4 @@ Usage: /st cc|mes|ano|cvv</b>"""
     except:
         import traceback
         await error_log(traceback.format_exc())
-
         
