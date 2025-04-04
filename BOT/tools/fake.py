@@ -8,10 +8,9 @@ from TOOLS.check_all_func import *
 
 FAKE_APIS = {
     "randomuser": "https://randomuser.me/api/?nat=",
-    "namefake": "https://api.namefake.com/"
+    "namefake": "https://api.namefake.com/"  # optional fallback
 }
 
-# Country Code Mapping
 COUNTRY_MAP = {
     "us": "United States",
     "in": "India",
@@ -30,17 +29,25 @@ COUNTRY_MAP = {
     "cn": "China",
     "kr": "South Korea",
     "za": "South Africa",
-    "ae": "United Arab Emirates"
+    "ae": "United Arab Emirates",
+    "pk": "Pakistan",
+    "bd": "Bangladesh",
+    "ph": "Philippines",
+    "id": "Indonesia"
 }
 
 async def fetch_fake_data_from_api(country_code):
     country_name = COUNTRY_MAP.get(country_code.lower(), country_code.upper())
 
+    # Use realistic web-scraped data for specific countries
+    if country_code.lower() in ["in", "br", "pk", "bd", "ph", "id"]:
+        return await scrape_fakename_generator(country_name)
+
     async def fetch(api_url):
         try:
             if "randomuser" in api_url:
-                api_url += country_code  # Append country code for country-specific data
-            
+                api_url += country_code
+
             async with httpx.AsyncClient(headers={"User-Agent": "Mozilla/5.0"}) as client:
                 response = await client.get(api_url)
                 if response.status_code == 200:
@@ -56,7 +63,7 @@ async def fetch_fake_data_from_api(country_code):
             parsed_data = parse_fake_data(api_url, data, country_name)
             if parsed_data:
                 return parsed_data
-    return None  # If all fail
+    return None
 
 def parse_fake_data(api_url, data, country_name):
     try:
@@ -66,26 +73,63 @@ def parse_fake_data(api_url, data, country_name):
                 "name": f"{user['name']['first']} {user['name']['last']}",
                 "gender": user["gender"].title(),
                 "street": f"{user['location']['street']['number']} {user['location']['street']['name']}",
-                "city": user["location"]["city"],
-                "state": user["location"]["state"],
-                "zipcode": user["location"]["postcode"],
-                "phone": user["phone"],
+                "city": user["location"].get("city", "Unknown"),
+                "state": user["location"].get("state", "Unknown"),
+                "zipcode": str(user["location"].get("postcode", "Unknown")),
+                "phone": user.get("phone", "N/A"),
                 "country": country_name
             }
         elif "namefake.com" in api_url:
             return {
-                "name": data["name"],
-                "gender": data["gender"].title(),
-                "street": data["address"],
-                "city": data["city"],
-                "state": data["state"],
-                "zipcode": data["zip"],
-                "phone": data["phone_h"],
+                "name": data.get("name", "Unknown"),
+                "gender": data.get("gender", "Unknown").title(),
+                "street": data.get("address", "Unknown"),
+                "city": data.get("city", "Unknown"),
+                "state": data.get("state", "Unknown"),
+                "zipcode": data.get("zip", "Unknown"),
+                "phone": data.get("phone_h", "N/A"),
                 "country": country_name
             }
     except Exception:
         return None
     return None
+
+async def scrape_fakename_generator(country_name):
+    try:
+        async with httpx.AsyncClient() as client:
+            url_country = country_name.lower().replace(" ", "-")
+            url = f"https://www.fakenamegenerator.com/gen-random-{url_country}.php"
+            response = await client.get(url)
+            soup = BeautifulSoup(response.text, "html.parser")
+
+            name = soup.find("div", {"class": "address"}).h3.text.strip()
+            address_block = soup.find("div", {"class": "address"}).find_all("div")[0].text.strip().split("\n")
+            street = address_block[0].strip()
+            city_state_zip = address_block[1].strip().split(",")
+            city = city_state_zip[0].strip()
+            state_zip = city_state_zip[1].strip().split(" ")
+            state = " ".join(state_zip[:-1])
+            zipcode = state_zip[-1]
+
+            info_section = soup.find_all("dl")[1]
+            dt_tags = info_section.find_all("dt")
+            dd_tags = info_section.find_all("dd")
+            info = {dt.text.strip(): dd.text.strip() for dt, dd in zip(dt_tags, dd_tags)}
+            gender = info.get("Gender", "Unknown")
+            phone = info.get("Phone", "N/A")
+
+            return {
+                "name": name,
+                "gender": gender,
+                "street": street,
+                "city": city,
+                "state": state,
+                "zipcode": zipcode,
+                "phone": phone,
+                "country": country_name
+            }
+    except Exception:
+        return None
 
 @Client.on_message(filters.command("fake", [".", "/"]))
 async def cmd_fake(client, message):
