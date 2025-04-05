@@ -89,7 +89,7 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         flag = getbin[5]
         currency = getbin[6]
 
-        user_link = f"https://t.me/{message.from_user.username}"
+        user_link = f"https://t.me/{message.from_user.username}\u2060"
 
         finalresp = f"""
 <b>『 {gateway} [ /svv ] 』
