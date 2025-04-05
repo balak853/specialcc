@@ -25,12 +25,12 @@ async def stripe_auth_cmd(Client, message):
         getcc = await getmessage(message)
         if getcc == False:
             resp = f"""<b>
-Gate Name: {gateway} ♻️
-CMD: /svv
+<b>Gate Name:</b> {gateway} ♻️
+<b>CMD:</b> /svv
 
-Message: No CC Found in your input ❌
+<b>Message:</b> No CC Found in your input ❌
 
-Usage: /svv cc|mes|ano|cvv</b>"""
+<b>Usage:</b> /svv cc|mes|ano|cvv</b>"""
             await message.reply_text(resp, message.id)
             return
 
@@ -39,10 +39,10 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 
         firstresp = f"""
 <b>
-𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■□□□
+<b>𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜</b> ■□□□
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
+<b>𝐂𝐚𝐫𝐝 ➜</b> <code>{fullcc}</code>
+<b>𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜</b> 『 {gateway} [ /svv ] 』
 </b>
 """
         await asyncio.sleep(0.5)
@@ -50,10 +50,10 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 
         secondresp = f"""
 <b>
-𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■■■□
+<b>𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜</b> ■■■□
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
+<b>𝐂𝐚𝐫𝐝 ➜</b> <code>{fullcc}</code>
+<b>𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜</b> 『 {gateway} [ /svv ] 』
 </b>
 """
         await asyncio.sleep(0.5)
@@ -72,10 +72,10 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 
         thirdresp = f"""
 <b>
-𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■■■■
+<b>𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜</b> ■■■■
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
+<b>𝐂𝐚𝐫𝐝 ➜</b> <code>{fullcc}</code>
+<b>𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜</b> 『 {gateway} [ /svv ] 』
 </b>
 """
         await asyncio.sleep(0.5)
@@ -94,18 +94,18 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         finalresp = f"""
 <b>『 {gateway} [ /svv ] 』
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝗖𝗮𝗿𝗱 ➜ <code>{fullcc}</code>
-𝐒𝐭𝐚𝐭𝐮𝐬 ➜ {status}
-𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ➜ {response}
+<b>𝗖𝗮𝗿𝗱 ➜</b> <code>{fullcc}</code>
+<b>𝐒𝐭𝐚𝐭𝐮𝐬 ➜</b> {status}
+<b>𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ➜</b> {response}
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝗜𝗻𝗳𝗼 ➜ {brand} - {type} - {level}
-𝐁𝐚𝐧𝐤 ➜ {bank}
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ➜ {country} - {flag} - {currency}
+<b>𝗜𝗻𝗳𝗼 ➜</b> {brand} - {type} - {level}
+<b>𝐁𝐚𝐧𝐤 ➜</b> {bank}
+<b>𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ➜</b> {country} - {flag} - {currency}
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝗧𝗶𝗺𝗲 ➜ {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜ <b><a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
+<b>𝗧𝗶𝗺𝗲 ➜</b> {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+<b>𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜</b> <b><a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a></b> ⤿ {role} ⤾
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝐁𝐨𝐭 𝐁𝐲 ➜ <b><a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
+<b>𝐁𝐨𝐭 𝐁𝐲 ➜</b> <b><a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a></b>
 </b>
 """
         await asyncio.sleep(0.5)
