@@ -105,7 +105,7 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 𝗧𝗶𝗺𝗲 ➜ {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜ <b><a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
-𝐁𝐨𝐭 𝐁𝐲 ➜ <b><a href="https://t.me/BALAK_TRUSTED">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷</a></b>
+𝐁𝐨𝐭 𝐁𝐲 ➜ <b><a href="tg://user?id=7028548502">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷‎</a>
 </b>
 """
         await asyncio.sleep(0.5)
