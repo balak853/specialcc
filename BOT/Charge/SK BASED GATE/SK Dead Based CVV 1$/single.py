@@ -16,7 +16,7 @@ async def stripe_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
 
-        gateway="SK BASE [1$]"
+        gateway = "SK BASED 1$"
 
         if checkall[0] == False:
             return
@@ -38,22 +38,23 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         fullcc = f"{cc}|{mes}|{ano}|{cvv}"
 
         firstresp = f"""
-↯ Checking.
-
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■□□□
+<b>
+𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■□□□
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
 </b>
 """
         await asyncio.sleep(0.5)
         firstchk = await message.reply_text(firstresp, message.id)
 
         secondresp = f"""
-↯ Checking..
-
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■□
+<b>
+𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■■■□
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
+</b>
 """
         await asyncio.sleep(0.5)
         secondchk = await Client.edit_message_text(message.chat.id, firstchk.id, secondresp)
@@ -69,25 +70,13 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         status = getresp["status"]
         response = getresp["response"]
 
-        # bearer_token = await get_token("VBV_TOKEN")
-        # vbv_check       = await vbvcheck(fullcc , bearer_token , session)
-        # vbv_status   = vbv_check[0]
-
-        # if vbv_status == "VBV Required ❌":
-        #     vbv ="failed"
-
-        # elif vbv_status == "VBV Passed ✅":
-        #     vbv ="passed"
-        # else:
-        #     pass
-
-
         thirdresp = f"""
-↯ Checking...
-
-- 𝐂𝐚𝐫𝐝 - <code>{fullcc}</code> 
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  <i>{gateway}</i>
-- 𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 - ■■■■
+<b>
+𝐂𝐡𝐞𝐜𝐤𝐢𝐧𝐠 ➜ ■■■■
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝐂𝐚𝐫𝐝 ➜ <code>{fullcc}</code>
+𝐆𝐚𝐭𝐞𝐰𝐚𝐲 ➜ 『 {gateway} [ /svv ] 』
+</b>
 """
         await asyncio.sleep(0.5)
         thirdcheck = await Client.edit_message_text(message.chat.id, secondchk.id, thirdresp)
@@ -101,28 +90,30 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         currency = getbin[6]
 
         finalresp = f"""
-{status}
-
-𝗖𝗮𝗿𝗱- <code>{fullcc}</code> 
-𝐆𝐚𝐭𝐞𝐰𝐚𝐲- <i>{gateway}</i>
-𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞- ⤿ <i>{response}</i> ⤾
-
-𝗜𝗻𝗳𝗼- {brand} - {type} - {level}
-𝐁𝐚𝐧𝐤- {bank} 
-𝐂𝐨𝐮𝐧𝐭𝐫𝐲- {country} - {flag} - {currency}
-
-𝗧𝗶𝗺𝗲- {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+<b>『 {gateway} [ /svv ] 』
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝗖𝗮𝗿𝗱 ➜ <code>{fullcc}</code>
+𝐒𝐭𝐚𝐭𝐮𝐬 ➜ {status}
+𝐑𝐞𝐬𝐩𝐨𝐧𝐬𝐞 ➜ {response}
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝗜𝗻𝗳𝗼 ➜ {brand} - {type} - {level}
+𝐁𝐚𝐧𝐤 ➜ {bank}
+𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ➜ {country} - {flag} - {currency}
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝗧𝗶𝗺𝗲 ➜ {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
+𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜ {message.from_user.first_name}
+━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
+𝐁𝐨𝐭 𝐁𝐲 ➜ <b><a href="https://t.me/BALAK_TRUSTED">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷</a></b>
+</b>
 """
         await asyncio.sleep(0.5)
         await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
         await setantispamtime(user_id)
         await deductcredit(user_id)
-        if status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅" or status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅":
+        if status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅":
             await sendcc(finalresp, session)
         await session.aclose()
 
     except:
         import traceback
         await error_log(traceback.format_exc())
-
-        
