@@ -27,7 +27,7 @@ def get_bin_info_from_csv(fbin, csv_file='FILES/bins_all.csv'):
                         "type": row[4],
                         "level": row[5],
                         "bank": row[6],
-                        "currency": row[7] if len(row) > 7 else "N/A"
+                        "currency": row[7] if len(row) > 7 and row[7].strip() else "N/A"
                     }
     except Exception as e:
         print(f"Error reading CSV: {e}")
@@ -47,6 +47,8 @@ async def cmd_bin(client, message):
         checkall = await check_all_thing(client, message)
         if not checkall[0]:
             return
+
+        role = checkall[1]  # Correctly assigned role from user check
 
         bin_number = await singlebinget(message)
 
@@ -89,9 +91,6 @@ async def cmd_bin(client, message):
         flag = bin_info.get("flag", "")
         currency = bin_info.get("currency", "N/A").upper()
         country_full_name = get_country_name(country_code, country_code)
-
-        # Define 'role' properly
-        role = "User"  # Modify this based on your logic
 
         resp = f"""
 𝐁𝐢𝐧 𝐋𝐨𝐨𝐤𝐮𝐩 𝐑𝐞𝐬𝐮𝐥𝐭 🔍
