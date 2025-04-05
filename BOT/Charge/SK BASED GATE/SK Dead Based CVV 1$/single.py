@@ -89,6 +89,8 @@ Usage: /svv cc|mes|ano|cvv</b>"""
         flag = getbin[5]
         currency = getbin[6]
 
+        user_link = f"https://t.me/{message.from_user.username}"
+
         finalresp = f"""
 <b>『 {gateway} [ /svv ] 』
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
@@ -101,7 +103,7 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 ➜ {country} - {flag} - {currency}
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
 𝗧𝗶𝗺𝗲 ➜ {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜ {message.from_user.first_name}
+𝐂𝐡𝐞𝐜𝐤𝐞𝐝 𝐁𝐲 ➜ <b><a href="{user_link}">{message.from_user.first_name}</a></b> ⤿ <b>{role}</b> ⤾
 ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━ ━
 𝐁𝐨𝐭 𝐁𝐲 ➜ <b><a href="https://t.me/BALAK_TRUSTED">【﻿亗𝙱𝚊𝙳𝚗𝙰𝚊𝙼】‎🍷</a></b>
 </b>
