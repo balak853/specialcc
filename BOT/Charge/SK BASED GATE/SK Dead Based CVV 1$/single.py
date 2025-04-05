@@ -109,7 +109,7 @@ Usage: /svv cc|mes|ano|cvv</b>"""
 </b>
 """
         await asyncio.sleep(0.5)
-        await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp)
+        await Client.edit_message_text(message.chat.id, thirdcheck.id, finalresp, disable_web_page_preview=True)
         await setantispamtime(user_id)
         await deductcredit(user_id)
         if status == "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅":
