@@ -71,7 +71,7 @@ async def stripe_mass_auth_cmd(Client, message):
         # Role-based CC limit
         if role == "OWNER":
             max_allowed = 25
-        elif role == "PRIMIUM":
+        elif role == "PREMIUM":
             max_allowed = 10
         else:
             max_allowed = 5  # FREE user
