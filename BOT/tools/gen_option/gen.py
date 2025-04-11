@@ -1,6 +1,5 @@
 import httpx
 import os
-import threading
 import asyncio
 import time
 from pyrogram import Client, filters
@@ -10,25 +9,10 @@ from TOOLS.check_all_func import *
 
 
 def generate_code_blocks(all_cards):
-    code_blocks = ""
-    cards = all_cards.split('\n')
-    for card in cards:
-        code_blocks += f"<code>{card}</code>\n"
-    return code_blocks
+    return "\n".join(f"<code>{card}</code>" for card in all_cards.split('\n') if card)
 
 
 @Client.on_message(filters.command("gen", [".", "/"]))
-def multi(client, message):
-    t1 = threading.Thread(target=bcall, args=(client, message))
-    t1.start()
-
-
-def bcall(client, message):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(gen_cmd(client, message))
-    loop.close()
-
 async def gen_cmd(client, message):
     try:
         user_id = str(message.from_user.id)
@@ -37,7 +21,6 @@ async def gen_cmd(client, message):
             return
 
         role = checkall[1]
-
         try:
             ccsdata = message.text.split()[1]
             cc_parts = ccsdata.split("|")
@@ -46,66 +29,63 @@ async def gen_cmd(client, message):
             ano = cc_parts[2] if len(cc_parts) > 2 else None
             cvv = cc_parts[3] if len(cc_parts) > 3 else None
         except IndexError:
-            resp = f"""
-𝐖𝐫𝐨𝐧𝐠 𝐅𝐨𝐫𝐦𝐚𝐭 ❌
+            await message.reply_text(
+                """<b>Wrong Format ❌
 
-𝐔𝐬𝐚𝐠𝐞:
-𝐎𝐧𝐥𝐲 𝐁𝐢𝐧
-<code>/𝐠𝐞𝐧 447697</code>
+Usage:
+Only Bin
+<code>/gen 447697</code>
 
-𝐖𝐢𝐭𝐡 𝐄𝐱𝐩𝐢𝐫𝐚𝐭𝐢𝐨𝐧
-<code>/𝐠𝐞𝐧 447697|12</code>
-<code>/𝐠𝐞𝐧 447697|12|23</code>
+With Expiration
+<code>/gen 447697|12</code>
+<code>/gen 447697|12|23</code>
 
-𝐖𝐢𝐭𝐡 𝐂𝐕𝐕
-<code>/𝐠𝐞𝐧 447697|12|23|000</code>
+With CVV
+<code>/gen 447697|12|23|000</code>
 
-𝐖𝐢𝐭𝐡 𝐂𝐮𝐬𝐭𝐨𝐦 𝐀𝐦𝐨𝐮𝐧𝐭
-<code>/𝐠𝐞𝐧 447697 100</code>
-"""
-            await message.reply_text(resp, message.id)
+With Custom Amount
+<code>/gen 447697 100</code></b>""",
+                reply_to_message_id=message.id
+            )
             return
 
-        amount = 10  # Default amount
+        amount = 10  # Default
         try:
             amount = int(message.text.split()[2])
         except (IndexError, ValueError):
             pass
 
-        delete = await message.reply_text("<b>🅶🅴🅽🅴🆁🅰🆃🅸🅽🅶...</b>", message.id)
-        start = time.perf_counter()
-        session = httpx.AsyncClient(timeout=30)
-        getbin = await get_bin_details(cc[:6])
-        await session.aclose()
-
-        brand, type_, level, bank, country, flag, currency = getbin
-
         if amount > 10000:
-            resp = """<b>𝐋𝐢𝐦𝐢𝐭 𝐑𝐞𝐚𝐜𝐡𝐞𝐝 ⚠️
-
-𝐌𝐞𝐬𝐬𝐚𝐠𝐞: 𝐌𝐚𝐱𝐢𝐦𝐮𝐦 𝐆𝐞𝐧𝐞𝐫𝐚𝐭𝐞𝐝 𝐀𝐦𝐨𝐮𝐧𝐭 𝐢𝐬 10𝐊.</b>"""
-            await message.reply_text(resp, message.id)
+            await message.reply_text("<b>Limit Reached ⚠️\nMaximum Generated Amount is 10K.</b>", message.id)
             return
 
+        notice = await message.reply_text("<b>Generating...</b>", reply_to_message_id=message.id)
+        start = time.perf_counter()
+
+        async with httpx.AsyncClient(timeout=30) as session:
+            brand, type_, level, bank, country, flag, currency = await get_bin_details(cc[:6])
+
         all_cards = await luhn_card_genarator(cc, mes, ano, cvv, amount)
+
         if amount == 10:
             resp = (
                 f"- 𝐂𝐂 𝐆𝐞𝐧𝐚𝐫𝐚𝐭𝐞𝐝 𝐒𝐮𝐜𝐜𝐞𝐬𝐬𝐟𝐮𝐥𝐥𝐲\n"
                 f"- 𝐁𝐢𝐧 - <code>{cc}</code>\n"
                 f"- 𝐀𝐦𝐨𝐮𝐧𝐭 - {amount}\n\n"
-                f"{generate_code_blocks(all_cards)}"
+                f"{generate_code_blocks(all_cards)}\n"
                 f"- 𝗜𝗻𝗳𝗼 - {brand} - {type_} - {level}\n"
                 f"- 𝐁𝐚𝐧𝐤 - {bank} 🏛\n"
                 f"- 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 - {country} - {flag}\n\n"
-                f"- 𝐓𝐢𝐦𝐞: - {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬\n"
-                f"- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href='tg://user?id={message.from_user.id}'> {message.from_user.first_name}</a> [ {role} ]"
+                f"- 𝐓𝐢𝐦𝐞: - {time.perf_counter() - start:.2f}s\n"
+                f"- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href='tg://user?id={message.from_user.id}'>{message.from_user.first_name}</a> [ {role} ]"
             )
-            await client.delete_messages(message.chat.id, delete.id)
+            await client.delete_messages(message.chat.id, notice.id)
             await message.reply_text(resp, message.id)
+
         else:
             filename = f"downloads/{amount}x_CC_Generated_By_{user_id}.txt"
-            with open(filename, "a") as f:
-                f.write(f"{all_cards}\n")
+            with open(filename, "w") as f:
+                f.write(all_cards)
 
             caption = f"""
 - 𝐁𝐢𝐧: <code>{cc}</code> 
@@ -115,11 +95,15 @@ async def gen_cmd(client, message):
 - 𝐁𝐚𝐧𝐤 - {bank} 🏛  
 - 𝐂𝐨𝐮𝐧𝐭𝐫𝐲 - {country} - {flag} - {currency}
 
-- 𝐓𝐢𝐦𝐞 - {time.perf_counter() - start:0.2f} 𝐬𝐞𝐜𝐨𝐧𝐝𝐬
-- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href="tg://user?id={message.from_user.id}"> {message.from_user.first_name}</a> ⤿ {role} ⤾
+- 𝐓𝐢𝐦𝐞 - {time.perf_counter() - start:.2f}s
+- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - <a href="tg://user?id={message.from_user.id}">{message.from_user.first_name}</a> ⤿ {role} ⤾
 """
-            await client.delete_messages(message.chat.id, delete.id)
-            await message.reply_document(document=filename, caption=caption, reply_to_message_id=message.id)
+            await client.delete_messages(message.chat.id, notice.id)
+            await message.reply_document(
+                document=filename,
+                caption=caption,
+                reply_to_message_id=message.id
+            )
             os.remove(filename)
 
     except Exception as e:
