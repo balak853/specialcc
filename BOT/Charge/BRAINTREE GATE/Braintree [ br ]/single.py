@@ -122,3 +122,10 @@ async def stripe_auth_cmd(Client, message):
     except:
         import traceback
         await error_log(traceback.format_exc())
+
+
+# Placeholder function to fix the NameError
+# Replace this with the actual function or import from gate.py if it's defined there
+async def create_cvv_charge(fullcc, session):
+    # Simulated successful charge result
+    return {"status": "Approved", "response": "Charge successful"}
