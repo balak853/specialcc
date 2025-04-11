@@ -2,149 +2,111 @@ import traceback
 from FUNC.defs import *
 from FUNC.usersdb_func import *
 
+
 async def get_charge_resp(result, user_id, fullcc):
     try:
-        # Initialize variables with default values
-        status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
-        response = "Unknown error"
-        hits = "NO"
 
-        if isinstance(result, str):  # Use isinstance for type checking
-            if "Nice! New payment method added" in result:
+        if type(result) == str:
+            status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+            response = result
+            hits = "NO"
+
+            if (
+                "Nice! New payment method added" in result
+            ):
                 status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Payment Method Added Successfully"
+                # response = "Approved ✅"
+                response = "1000: Approved"
                 hits = "YES"
                 await forward_resp(fullcc, "BRAINTREE AUTH", response)
 
-            elif "Payment method successfully added." in result:
+            elif ("avs: Gateway Rejected: avs" in result):
                 status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Payment Method Added Successfully"
+                response = "avs: Gateway Rejected: avs"
                 hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-            elif "There was an error saving your payment method. Reason: Card Issuer Declined CVV" in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Card Issuer Declined CVV"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: Invalid postal code and cvv" in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Invalid Postal Code or CVV"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: Invalid postal code or street address." in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Invalid Postal Code or Street Address."
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: Insufficient Funds" in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Insufficient Funds"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: CVV" in result or "There was an error saving your payment method. Reason: CVV" in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "CVV"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: Card Issuer Declined CVV." in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "Card Issuer Declined CVV"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "There was an error saving your payment method. Reason: CVV." in result:
-                status = "𝐀𝐩𝐩𝐫𝐨𝐯𝐞𝐝 ✅"
-                response = "CVV"
-                hits = "YES"
-                await forward_resp(fullcc, "BRAINTREE AUTH", response)
-
-            elif "Status code cvv: Gateway Rejected: cvv" in result:
+    
+            elif ("Duplicate card exists in the vault" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+                response = "Duplicate card exists in the vault"
+                hits = "NO"
+   
+   
+            elif ("Gateway Rejected: cvv" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Gateway Rejected: cvv"
+                hits = "NO"
 
-            elif "Declined - Call Issuer" in result:
+
+
+
+            elif ("Status code cvv: Gateway Rejected: cvv" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+                response = "Gateway Rejected: cvv"
+                hits = "NO"
+
+            elif ("Declined - Call Issuer" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Declined - Call Issuer"
-
-            elif "Cannot Authorize at this time" in result:
+                hits = "NO"
+            elif ("Call Issuer. Pick Up Card" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
+                response = "Call Issuer. Pick Up Card"
+                hits = "NO"
+            elif ("Cannot Authorize at this time" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Cannot Authorize at this time"
+                hits = "NO"
 
-            elif "Processor Declined - Fraud Suspected" in result:
+            elif ("Processor Declined - Fraud Suspected" in result):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Fraud Suspected"
+                hits = "NO"
 
-            elif "There was an error saving your payment method. Reason: Gateway Rejected: risk_threshold" in result:
+            elif "Status code risk_threshold: Gateway Rejected: risk_threshold" in result:
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Gateway Rejected: risk_threshold"
-
-            elif "There was an error saving your payment method. Reason: Card Not Activated" in result:
-                response = "Card Not Activated"
-
-            elif "There was an error saving your payment method. Reason: Closed Card" in result:
-                response = "Closed Card"
-
-            elif "There was an error saving your payment method. Reason: No Such Issuer" in result:
-                response = "No Such Issuer"
-
-            elif "There was an error saving your payment method. Reason: Declined" in result :
-                response = "Declined"
-
-            elif "There was an error saving your payment method. Reason: Transaction Not Allowed" in result:
-                response = "Transaction Not Allowed"
-
-            elif "There was an error saving your payment method. Reason: Processor Declined" in result:
-                response = "Processor Declined"
-
-            elif "There was an error saving your payment method. Reason: Do Not Honor" in result:
-                response = "Do Not Honor"
-            
-            elif "There was an error saving your payment method. Reason: No Account" in result:
-                response = "No Account"
+                hits = "NO"
 
             elif ("We're sorry, but the payment validation failed. Declined - Call Issuer" in result or
-                  "Payment failed: Declined - Call Issuer" in result):
+                  "Payment failed: Declined - Call Issuer" in result
+                  ):
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Declined - Call Issuer"
-
-            elif "You cannot add a new payment method so soon after the previous one. Please wait for 20 seconds." in result:
-                response = "Wait 20 sec. before adding new"
+                hits = "NO"
 
             elif "ProxyError" in result:
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 response = "Proxy Connection Refused"
+                hits = "NO"
                 await refundcredit(user_id)
 
             else:
-                # Attempt to parse the message
+                status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
                 try:
-                    if '"message": "' in result:
-                        response = result.split('"message": "')[1].split('"')[0] + " ❌"
-                    else:
-                        response = result
-                except Exception as e:
-                    response = f"Error parsing message: {str(e)}"
+                    response = result.split('"message": "')[
+                        1].split('"')[0] + " ❌"
+                except:
+                    response = result
                     await result_logs(fullcc, "Braintree Auth", result)
+                hits = "NO"
 
-        # Return JSON response
-        json_response = {
+        json = {
             "status": status,
             "response": response,
             "hits": hits,
             "fullz": fullcc,
         }
-        return json_response
+        return json
 
     except Exception as e:
-        # Log the full exception traceback for debugging
         status = "𝐃𝐞𝐜𝐥𝐢𝐧𝐞𝐝 ❌"
         response = str(e) + " ❌"
         hits = "NO"
-        await result_logs(fullcc, "Braintree Auth Error", traceback.format_exc())
 
-        # Return the error JSON response
-        json_response = {
+        json = {
             "status": status,
             "response": response,
             "hits": hits,
             "fullz": fullcc,
         }
-        return json_response
+        return json
