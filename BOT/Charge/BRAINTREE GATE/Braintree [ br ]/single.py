@@ -10,7 +10,7 @@ from .response import *
 from .gate import *
 
 @Client.on_message(filters.command("br", [".", "/"]))
-async def pp_auth_cmd(Client, message):
+async def stripe_auth_cmd(Client, message):
     try:
         user_id = str(message.from_user.id)
         checkall = await check_all_thing(Client, message)
