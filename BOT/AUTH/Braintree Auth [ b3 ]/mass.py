@@ -14,21 +14,29 @@ from TOOLS.getcc_for_mass import *
 
 
 async def mchkfunc(fullcc, user_id):
+    retries = 3
+    for attempt in range(retries):
         try:
             proxies = await get_proxy_format()  # Pass user_id here
             session = httpx.AsyncClient(
-                timeout=15, proxies=proxies, follow_redirects=True)
+                timeout=30, proxies=proxies, follow_redirects=True)
             result = await create_braintree_auth(fullcc, session)
             getresp = await get_charge_resp(result, user_id, fullcc)
             response = getresp["response"]
             status   = getresp["status"]
+
+
             await session.aclose()
             return f"Card↯ <code>{fullcc}</code>\n<b>Status - {status}</b>\n<b>Result -⤿ {response} ⤾</b>\n\n"
 
         except Exception as e:
             import traceback
             await error_log(traceback.format_exc())
-            return f"<code>{fullcc}</code>\n<b>Result - DECLINED ❌</b>\n"
+            if attempt < retries - 1:
+                await asyncio.sleep(0.5)
+                continue
+            else:
+                return f"<code>{fullcc}</code>\n<b>Result - DECLINED ❌</b>\n"
 
 
 @Client.on_message(filters.command("mb3", [".", "/"]))
@@ -49,6 +57,7 @@ async def stripe_mass_auth_cmd(Client, message):
         user_id = str(message.from_user.id)
         first_name = str(message.from_user.first_name)
         checkall = await check_all_thing(Client, message)
+
         if checkall[0] == False:
             return
 
@@ -59,18 +68,36 @@ async def stripe_mass_auth_cmd(Client, message):
             return
         
         ccs = getcc[1]
+
+        if role != "OWNER":
+            if len(ccs) > 5:
+                resp = """<b>
+Limit Reached ⚠️
+
+Message: You can't check more than 5 CCs at a time.
+                </b>"""
+                await message.reply_text(resp)
+                return
+
+
+
+
+
+
+
+
         resp = f"""
-- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  𝑩𝒓𝒂𝒊𝒏𝒕𝒓𝒆𝒆 𝑨𝒖𝒕𝒉
+- 𝐆𝐚𝐭𝐞𝐰𝐚𝐲 -  Braintree Auth
 
-- 𝑪𝑪 𝑨𝒎𝒐𝒖𝒏𝒕 -{len(ccs)}
-- 𝑪𝒉𝒆𝒄𝒌𝒊𝒏𝒈 𝑪𝑪 𝑭𝒐𝒓: {first_name}
+- 𝐂𝐂 𝐀𝐦𝐨𝐮𝐧𝐭 -{len(ccs)}
+- 𝐂𝐡𝐞𝐜𝐤𝐞𝐝 - Checking CC For {first_name}
 
-- 𝑺𝒕𝒂𝒕𝒖𝒔 - 𝑷𝒓𝒐𝒄𝒆𝒔𝒔𝒊𝒏𝒈...⌛️
+- 𝐒𝐭𝐚𝐭𝐮𝐬 - Processing...⌛️
 """
         nov = await message.reply_text(resp, message.id)
 
         text = f"""
-<b>↯ 𝑴𝒂𝒔𝒔 𝑩3 𝑨𝒖𝒕𝒉 </b> \n
+<b>↯ Mass Braintree Auth </b> \n
 """
         amt = 0
         start = time.perf_counter()
