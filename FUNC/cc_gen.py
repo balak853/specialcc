@@ -1,44 +1,79 @@
-import random
+async def checkLuhn(cardNo):
+    nDigits = len(cardNo)
+    nSum = 0
+    isSecond = False
+    for i in range(nDigits - 1, -1, -1):
+        d = ord(cardNo[i]) - ord("0")
+        if isSecond == True:
+            d = d * 2
+        nSum += d // 10
+        nSum += d % 10
+        isSecond = not isSecond
+    if nSum % 10 == 0:
+        return True
+    else:
+        return False
 
-def check_luhn(card_no):
-    digits = list(map(int, card_no))
-    checksum = 0
-    parity = len(digits) % 2
 
-    for i, digit in enumerate(digits):
-        if i % 2 == parity:
-            digit *= 2
-            if digit > 9:
-                digit -= 9
-        checksum += digit
-
-    return checksum % 10 == 0
-
-def cc_generator(cc, mes, ano, cvv):
+async def cc_genarator(cc, mes, ano, cvv):
     cc, mes, ano, cvv = str(cc), str(mes), str(ano), str(cvv)
+    import random
+    if mes != "None" and len(mes) == 1:
+        mes = "0" + mes
 
-    if mes.lower() in ["none", "x", "xx", "rnd"]:
-        mes = str(random.randint(1, 12)).zfill(2)
+    if ano != "None" and len(ano) == 2:
+        ano = "20" + ano
 
-    if ano.lower() in ["none", "x", "xx", "rnd"]:
-        ano = str(random.randint(2024, 2035))
+    numbers = list("0123456789")
+    random.shuffle(numbers)
+    result = "".join(numbers)
+    result = cc + result
 
-    if cvv.lower() in ["none", "x", "xx", "rnd"]:
-        cvv = str(random.randint(1000, 9999) if cc.startswith(("34", "37")) else random.randint(100, 999))
 
-    while True:
-        gen = "".join(str(random.randint(0, 9)) if x.lower() == 'x' else x for x in cc)
-        length = 15 if gen.startswith(("34", "37")) else 16
-        card = gen[:length]
 
-        if check_luhn(card):
-            break
+    if cc[:2] == "37" or cc[:2] == "34":
+        cc = result[0:15]
+    else:
+        cc = result[0:16]
 
-    return f"{card}|{mes}|{ano}|{cvv}"
 
-def luhn_card_generator(cc, mes, ano, cvv, amount):
-    cards = []
+    for i in range(len(cc)):
+        if cc[i] == 'x':
+            cc = cc[:i] + str(random.randint(0, 9)) + cc[i+1:]
+
+    if mes == "None" or 'X' in mes or 'x' in mes or 'rnd' in mes:
+        mes = str(random.randint(1, 12))
+        if len(mes) == 1:
+            mes = "0" + str(mes)
+    else:
+        mes = mes
+
+    if ano == "None" or 'X' in ano or 'x' in ano or 'rnd' in ano:
+        ano = random.randint(2024, 2035)
+    else:
+        ano = ano
+
+    if cvv == "None" or 'x' in cvv or 'X' in cvv or 'rnd' in cvv:
+
+            
+        if cc[:2] == "37" or cc[:2] == "34":
+            cvv = str(random.randint(1000, 9999))
+        else:
+            cvv = str(random.randint(100, 999))
+    else:
+        cvv = cvv
+
+    return f"{cc}|{mes}|{ano}|{cvv}"
+
+
+async def luhn_card_genarator(cc, mes, ano, cvv, amount):
+    all_cards = ""
     for _ in range(amount):
-        card = cc_generator(cc, mes, ano, cvv)
-        cards.append(card)
-    return "\n".join(cards)
+        while True:
+            result = await cc_genarator(cc, mes, ano, cvv)
+            ccx, mesx, anox, cvvx = result.split("|")
+            check_luhn = await checkLuhn(ccx)
+            if check_luhn:
+                all_cards += f"{ccx}|{mesx}|{anox}|{cvvx}\n"
+                break
+    return all_cards
