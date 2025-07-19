@@ -44,7 +44,7 @@ Type /register to Continue
             resp = f"""<b>
 Premium Users Required ⚠️
 
-Message: Only Premium Users are Allowed to use bot in Personal . Although You Can Use Bot Free Here https://t.me/+tYnbEVtZ4cw3MzA9
+Message: Only Premium Users are Allowed to use bot in Personal . Although You Can Use Bot Free Here https://t.me/+2ky3NvWYvaM4ZGNl
 
 Buy Premium Plan Using /buy 
 </b>"""
