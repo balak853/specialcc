@@ -43,7 +43,7 @@ def check_proxy(proxy_url):
 
 
 
-# @Client.on_message(filters.command("setproxy", [".", "/"]))
+@Client.on_message(filters.command("setproxy", [".", "/"]))
 async def addproxy(client, message):
     try:
         user_id = str(message.from_user.id)
@@ -75,7 +75,7 @@ Status: Successful
 
 
 
-# @Client.on_message(filters.command("rmproxy", [".", "/"]))
+@Client.on_message(filters.command("rmproxy", [".", "/"]))
 async def removeproxy(client, message):
     try:
         user_id = str(message.from_user.id)
@@ -90,7 +90,7 @@ async def removeproxy(client, message):
 
 
 
-# @Client.on_message(filters.command("viewproxy", [".", "/"]))
+@Client.on_message(filters.command("viewproxy", [".", "/"]))
 async def viewproxy(client, message):
     try:
         user_id = str(message.from_user.id)
