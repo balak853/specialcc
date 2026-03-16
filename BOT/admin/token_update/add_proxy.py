@@ -1,6 +1,7 @@
 import json
 from pyrogram import Client, filters
 from FUNC.usersdb_func import *
+from FUNC.defs import error_log
 
 @Client.on_message(filters.command("addproxy", [".", "/"]))
 async def addbrod(Client, message):
@@ -13,9 +14,22 @@ Contact Bot Owner @BALAK_TRUSTED !</b>"""
             await message.reply_text(resp, message.id)
             return
 
-        proxy      = str(message.reply_to_message.text)
-        clear_file = open('FILES/proxy.txt', 'w',encoding="UTF-8").close()
-        with open("FILES/proxy.txt", "a",encoding="UTF-8") as f:
+        if message.reply_to_message and message.reply_to_message.text:
+            proxy = str(message.reply_to_message.text).strip()
+        elif len(message.command) > 1:
+            proxy = " ".join(message.command[1:]).strip()
+        else:
+            resp = """<b>Usage: Reply to a message containing proxy list, or use /addproxy ip:port:user:pass</b>"""
+            await message.reply_text(resp, message.id)
+            return
+
+        if not proxy:
+            resp = """<b>Error: Proxy list is empty ❌</b>"""
+            await message.reply_text(resp, message.id)
+            return
+
+        clear_file = open('FILES/proxy.txt', 'w', encoding="UTF-8").close()
+        with open("FILES/proxy.txt", "a", encoding="UTF-8") as f:
             f.write(proxy)
 
         resp = f"""<b>
