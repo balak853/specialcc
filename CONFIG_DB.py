@@ -1,20 +1,14 @@
 import pymongo
 import dns.resolver
 
-# DNS resolver set (Google DNS)
+# DNS Resolver set to Google DNS 8.8.8.8
 dns.resolver.default_resolver = dns.resolver.Resolver(configure=False)
 dns.resolver.default_resolver.nameservers = ["8.8.8.8"]
 
+client = pymongo.MongoClient("mongodb+srv://balak:Balak12345@cluster0.fdc3y.mongodb.net/?retryWrites=true&w=majority")
+
 try:
-    client = pymongo.MongoClient(
-        "mongodb+srv://balak:Balak12345@cluster0.fdc3y.mongodb.net/?retryWrites=true&w=majority"
-    )
-
     client.admin.command("ping")
-    print("✅ CONFIG DB CONNECTED SUCCESSFULLY!")
-
-except pymongo.errors.ConnectionFailure as e:
-    print("❌ CONFIG DB CONNECTION FAILED:", e)
-
+    print("MONGODB CONNECTED SUCCESSFULLY")
 except Exception as e:
-    print("❌ ERROR:", e)
+    print("MONGODB CONNECTION FAILED", e)
